@@ -193,4 +193,8 @@
 
     <!-- Kernel Adiutor-Mod QS Tile -->
     <string name="quick_settings_kernel_adiutor_label">Kernel Adiutor-Mod</string>
+
+    <!-- Typing virtual buttons -->
+    <string name="accessibility_dpad_left">Cursor left</string>
+    <string name="accessibility_dpad_right">Cursor right</string>
 </resources>
