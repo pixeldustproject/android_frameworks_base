@@ -2257,5 +2257,9 @@ message MetricsEvent {
 
     // PixelDust Metrics
     PIXELDUST = 500;
+
+    // BEGIN PA CONSTANTS
+    // Settings -> Backup & Reset -> Feature Preferences
+    FEATURE_PREFERENCES = 501;
   }
 }
