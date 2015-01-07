@@ -86,6 +86,12 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.content.ServiceConnection;
+import android.content.ComponentName;
+import android.os.IBinder;
+import android.os.Messenger;
+import android.os.RemoteException;
+
 /**
  * Helper to show the global actions dialog.  Each item is an {@link Action} that
  * may show depending on whether the keyguard is showing, and whether the device
@@ -290,20 +296,33 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
                 continue;
             }
             if (GLOBAL_ACTION_KEY_POWER.equals(actionKey)) {
-                continue;
+                if (Settings.System.getInt(mContext.getContentResolver(),
+                        Settings.System.POWERMENU_POWER, 1) == 1) {
+                mItems.add(new PowerAction());
+                }
             } else if (GLOBAL_ACTION_KEY_REBOOT.equals(actionKey)) {
-                continue;
+                if (Settings.System.getInt(mContext.getContentResolver(),
+                        Settings.System.POWERMENU_REBOOT, 1) == 1) {
+                mItems.add(new RebootAction());
+                }
             } else if (GLOBAL_ACTION_KEY_SCREENSHOT.equals(actionKey)) {
-                continue;
+                if (Settings.System.getInt(mContext.getContentResolver(),
+                        Settings.System.POWERMENU_SCREENSHOT, 1) == 1) {
+                    mItems.add(ScreenshotAction());
+                }
             } else if (GLOBAL_ACTION_KEY_AIRPLANE.equals(actionKey)) {
+                if (Settings.System.getInt(mContext.getContentResolver(),
+                        Settings.System.POWERMENU_AIRPLANE, 1) == 1) {
                 mItems.add(mAirplaneModeOn);
+                }
             } else if (GLOBAL_ACTION_KEY_BUGREPORT.equals(actionKey)) {
                 if (Settings.Global.getInt(mContext.getContentResolver(),
                         Settings.Global.BUGREPORT_IN_POWER_MENU, 0) != 0 && isCurrentUserOwner()) {
                     mItems.add(new BugReportAction());
                 }
             } else if (GLOBAL_ACTION_KEY_SILENT.equals(actionKey)) {
-                if (mShowSilentToggle) {
+                if (Settings.System.getInt(mContext.getContentResolver(),
+                        Settings.System.POWERMENU_SOUNDPANEL, 1) == 1) {
                     mItems.add(mSilentModeAction);
                 }
             } else if (GLOBAL_ACTION_KEY_USERS.equals(actionKey)) {
@@ -311,9 +330,15 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
                     addUsersToMenu(mItems);
                 }
             } else if (GLOBAL_ACTION_KEY_SETTINGS.equals(actionKey)) {
+                if (Settings.System.getInt(mContext.getContentResolver(),
+                        Settings.System.POWERMENU_SETTINGS, 0) != 0) {
                 mItems.add(getSettingsAction());
+                }
             } else if (GLOBAL_ACTION_KEY_LOCKDOWN.equals(actionKey)) {
+                if (Settings.System.getInt(mContext.getContentResolver(),
+                        Settings.System.POWERMENU_LOCKDOWN, 0) != 0) {
                 mItems.add(getLockdownAction());
+                }
             } else if (GLOBAL_ACTION_KEY_VOICEASSIST.equals(actionKey)) {
                 mItems.add(getVoiceAssistAction());
             } else if (GLOBAL_ACTION_KEY_ASSIST.equals(actionKey)) {
@@ -455,9 +480,9 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
         }
     }
 
-    private Action getScreenshotAction() {
-        return new SinglePressAction(com.android.internal.R.drawable.ic_lock_screenshot,
-                R.string.global_action_screenshot) {
+    private Action ScreenshotAction() {
+        return new SinglePressAction(com.android.internal.R.drawable.ic_lock_power_screenshot,
+                R.string.powermenu_screenshot) {
 
             public void onPress() {
                 takeScreenshot();
@@ -540,7 +565,7 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
     }
 
     private Action getSettingsAction() {
-        return new SinglePressAction(com.android.internal.R.drawable.ic_settings,
+        return new SinglePressAction(com.android.internal.R.drawable.ic_settings_powermenu,
                 R.string.global_action_settings) {
 
             @Override
@@ -753,13 +778,6 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
                         };
                         msg.replyTo = new Messenger(h);
                         msg.arg1 = msg.arg2 = 0;
-
-                        /*  remove for the time being
-                        if (mStatusBar != null && mStatusBar.isVisibleLw())
-                            msg.arg1 = 1;
-                        if (mNavigationBar != null && mNavigationBar.isVisibleLw())
-                            msg.arg2 = 1;
-                         */
 
                         /* wait for the dialog box to close */
                         try {
