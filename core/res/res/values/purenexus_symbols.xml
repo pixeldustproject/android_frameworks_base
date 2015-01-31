@@ -22,6 +22,8 @@
     <java-symbol type="string" name="reboot_progress" />
 
     <!-- Config Power Menu global actions-->
+    <java-symbol type="dimen" name="global_actions_avatar_size" />
+    <java-symbol type="string" name="global_action_current_user" />
     <java-symbol type="string" name="global_action_reboot" />
     <java-symbol type="string" name="global_action_screenshot" />
     <java-symbol type="string" name="global_action_torch" />
