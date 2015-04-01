@@ -148,4 +148,7 @@
   <java-symbol type="string" name="app_killed_message" />
   <java-symbol type="string" name="no_app_killed_message" />
   <java-symbol type="integer" name="config_backKillTimeout" />
+
+  <!-- Automatic brightness enhancements -->
+  <java-symbol type="integer" name="config_autoBrightnessBrighteningLightFastDebounce"/>
 </resources>
