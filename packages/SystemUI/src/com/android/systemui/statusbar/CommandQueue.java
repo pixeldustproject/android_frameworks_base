@@ -80,6 +80,9 @@ public class CommandQueue extends IStatusBar.Stub {
     private static final int MSG_RESTART_UI                    = 34 << MSG_SHIFT;
     private static final int MSG_SET_AUTOROTATE_STATUS         = 35 << MSG_SHIFT;
     private static final int MSG_SCREEN_PINNING_STATE_CHANGED  = 36 << MSG_SHIFT;
+    private static final int MSG_TOGGLE_LAST_APP               = 37 << MSG_SHIFT;
+    private static final int MSG_TOGGLE_KILL_APP               = 38 << MSG_SHIFT;
+    private static final int MSG_TOGGLE_SCREENSHOT             = 39 << MSG_SHIFT;
 
     public static final int FLAG_EXCLUDE_NONE = 0;
     public static final int FLAG_EXCLUDE_SEARCH_PANEL = 1 << 0;
@@ -140,6 +143,11 @@ public class CommandQueue extends IStatusBar.Stub {
 
         void restartUI();
         void screenPinningStateChanged(boolean enabled);
+
+        public void toggleLastApp();
+        public void toggleKillApp();
+        public void toggleScreenshot();
+        public void toggleOrientationListener(boolean enable);
     }
 
     public CommandQueue(Callbacks callbacks) {
@@ -281,6 +289,10 @@ public class CommandQueue extends IStatusBar.Stub {
             mHandler.removeMessages(MSG_CANCEL_PRELOAD_RECENT_APPS);
             mHandler.obtainMessage(MSG_CANCEL_PRELOAD_RECENT_APPS, 0, 0, null).sendToTarget();
         }
+    }
+
+    public void toggleOrientationListener(boolean enable) {
+        mCallbacks.toggleOrientationListener(enable);
     }
 
     @Override
@@ -429,6 +441,27 @@ public class CommandQueue extends IStatusBar.Stub {
         }
     }
 
+    public void toggleLastApp() {
+        synchronized (mLock) {
+            mHandler.removeMessages(MSG_TOGGLE_LAST_APP);
+            mHandler.obtainMessage(MSG_TOGGLE_LAST_APP, 0, 0, null).sendToTarget();
+        }
+    }
+
+    public void toggleKillApp() {
+        synchronized (mLock) {
+            mHandler.removeMessages(MSG_TOGGLE_KILL_APP);
+            mHandler.obtainMessage(MSG_TOGGLE_KILL_APP, 0, 0, null).sendToTarget();
+        }
+    }
+
+    public void toggleScreenshot() {
+        synchronized (mLock) {
+            mHandler.removeMessages(MSG_TOGGLE_SCREENSHOT);
+            mHandler.obtainMessage(MSG_TOGGLE_SCREENSHOT, 0, 0, null).sendToTarget();
+        }
+    }
+
     private final class H extends Handler {
         public void handleMessage(Message msg) {
             final int what = msg.what & MSG_MASK;
@@ -555,6 +588,15 @@ public class CommandQueue extends IStatusBar.Stub {
                     break;
                 case MSG_SCREEN_PINNING_STATE_CHANGED:
                     mCallbacks.screenPinningStateChanged(msg.arg1 != 0);
+                    break;
+                case MSG_TOGGLE_LAST_APP:
+                    mCallbacks.toggleLastApp();
+                    break;
+                case MSG_TOGGLE_KILL_APP:
+                    mCallbacks.toggleKillApp();
+                    break;
+                case MSG_TOGGLE_SCREENSHOT:
+                    mCallbacks.toggleScreenshot();
                     break;
             }
         }
