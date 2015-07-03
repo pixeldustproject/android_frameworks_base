@@ -236,6 +236,9 @@
     <!-- [CHAR LIMIT=100] Notification Importance slider: very low importance level description -->
     <string name="notification_importance_very_low">No full screen interruption, peeking, sound, or vibration. Hide from lock screen.</string>
 
+    <!-- Pie tile -->
+    <string name="quick_settings_pie_label">Pie</string>
+
     <!-- PA Pie controls -->
     <string name="pie_date_format" translatable="false">ccc, dd MMM yyyy</string>
     <string name="pie_hour_format_12">hh:mm</string>
