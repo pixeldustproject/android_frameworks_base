@@ -269,8 +269,11 @@
     <!-- OnTheSpot: Pie controls feature description message. [CHAR LIMIT=NONE] -->
     <string name="enable_pie">Would you like to use pie controls while in immersive mode?"</string>
 
-    <!-- Pie controls -->
-    <string name="pie_date_format">EEEE, dd MMMM yyyy</string>
+    <!-- Pie tile -->
+    <string name="quick_settings_pie_label">Pie</string>
+
+    <!-- PA Pie controls -->
+    <string name="pie_date_format" translatable="false">ccc, dd MMM yyyy</string>
     <string name="pie_hour_format_12">hh:mm</string>
     <string name="pie_hour_format_24">HH:mm</string>
     <string name="pie_am_pm">a</string>
