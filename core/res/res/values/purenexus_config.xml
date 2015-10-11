@@ -64,6 +64,9 @@
     <!-- Single handed mode config -->
     <bool name="single_hand_mode">true</bool>
 
+    <!-- kill app long press back -->
+    <integer name="config_backKillTimeout">1000</integer>
+
     <!-- Slim recent app screen-->
     <!-- The duration (in milliseconds) of recent app screen animation. -->
     <integer name="config_recentDefaultDur">300</integer>
