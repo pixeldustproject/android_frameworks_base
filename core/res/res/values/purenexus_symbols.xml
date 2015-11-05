@@ -163,4 +163,7 @@
   <!-- call removeCient in cancelAuthentification after stop to
         avoid 3s delay for certain fpc HALs -->
   <java-symbol type="bool" name="config_fingerprintRemoveClientOnCancel" />
+
+  <!-- Config.xml entries -->
+  <java-symbol type="bool" name="config_show_cmIMESwitcher"/>
 </resources>

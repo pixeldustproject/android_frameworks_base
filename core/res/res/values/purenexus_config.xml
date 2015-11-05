@@ -86,4 +86,7 @@
     <!-- call removeCient in cancelAuthentification after stop to
         avoid 3s delay for certain fpc HALs -->
     <bool name="config_fingerprintRemoveClientOnCancel">false</bool>
+
+    <!-- Setting to false will disable CM's IME switcher implementation for tablets -->
+    <bool name="config_show_cmIMESwitcher">true</bool>
 </resources>
