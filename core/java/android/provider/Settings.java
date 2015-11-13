@@ -3669,6 +3669,12 @@ public final class Settings {
         public static final String DOUBLE_TAP_SLEEP_GESTURE = "double_tap_sleep_gesture";
 
         /**
+         * Whether to vibrate when quick settings tile is pressed.
+         * @hide
+         */
+        public static final String QUICK_SETTINGS_TILES_VIBRATE = "quick_settings_vibrate";
+
+        /**
          * Whether to allow notifications with the screen on or DayDreams.
          * The value is boolean (1 or 0). Default will always be false.
          * @hide
@@ -3880,8 +3886,6 @@ public final class Settings {
         public static final String POWERMENU_LOCKDOWN = "powermenu_lockdown";
 
         /**
-         * Whether to display airplane in the power menu
-         *
          * @hide
          */
         public static final String POWERMENU_AIRPLANE = "powermenu_airplane";
