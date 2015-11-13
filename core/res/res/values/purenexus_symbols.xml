@@ -131,4 +131,7 @@
   <java-symbol type="string" name="singlehandmode_click_hint_message" />
   <java-symbol type="string" name="singlehandmode_slide_hint_message" />
   <java-symbol type="layout" name="single_hand_window" />
+
+  <!-- Vendor warning -->
+  <java-symbol type="string" name="system_error_vendorprint" />
 </resources>
