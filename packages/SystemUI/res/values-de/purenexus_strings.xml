@@ -95,7 +95,7 @@
   <string name="quick_settings_sound_label">Ton</string>
   <string name="quick_settings_sound_ring">Klingeln</string>
   <string name="quick_settings_sound_vibrate">Vibrieren</string>
-  <string name="quick_settings_sound_dnd">Nicht stören</string>
+  <string name="quick_settings_sound_silent">Lautlos</string>
   <!-- Sync QS tile -->
   <string name="quick_settings_sync_label">Sync</string>
   <string name="accessibility_quick_settings_sync_off">Sync aus</string>
