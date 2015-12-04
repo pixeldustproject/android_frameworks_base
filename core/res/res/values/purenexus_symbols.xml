@@ -92,4 +92,7 @@
   <java-symbol type="attr" name="min" />
   <java-symbol type="attr" name="unitsLeft" />
   <java-symbol type="attr" name="unitsRight" />
+
+  <!-- Screen Recording -->
+  <java-symbol type="bool" name="config_enableScreenrecordChord" />
 </resources>
