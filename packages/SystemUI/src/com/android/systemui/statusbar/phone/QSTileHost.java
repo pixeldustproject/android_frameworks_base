@@ -57,6 +57,7 @@ import com.android.systemui.qs.tiles.LocationTile;
 import com.android.systemui.qs.tiles.NfcTile;
 import com.android.systemui.qs.tiles.NightDisplayTile;
 import com.android.systemui.qs.tiles.RotationLockTile;
+import com.android.systemui.qs.tiles.ScreenrecordTile;
 import com.android.systemui.qs.tiles.ScreenshotTile;
 import com.android.systemui.qs.tiles.SoundTile;
 import com.android.systemui.qs.tiles.UserTile;
@@ -442,6 +443,7 @@ public class QSTileHost implements QSTile.Host, Tunable {
         else if (tileSpec.equals("caffeine")) return new CaffeineTile(this);
         else if (tileSpec.equals("nfc")) return new NfcTile(this);
         else if (tileSpec.equals("screenshot")) return new ScreenshotTile(this);
+        else if (tileSpec.equals("screenrecord")) return new ScreenrecordTile(this);
         else if (tileSpec.equals("sound")) return new SoundTile(this);
         // Intent tiles.
         else if (tileSpec.startsWith(IntentTile.PREFIX)) return IntentTile.create(this,tileSpec);
