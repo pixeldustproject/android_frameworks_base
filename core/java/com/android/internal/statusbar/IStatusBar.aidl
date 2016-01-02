@@ -99,6 +99,8 @@ oneway interface IStatusBar
 
     // SystemUI Restart method for masquerade
     void restartUI();
+    // add back all keyboard IME features back
+    void setAutoRotate(boolean enabled);
 
     /**
      * Notifies the status bar that a camera launch gesture has been detected.
