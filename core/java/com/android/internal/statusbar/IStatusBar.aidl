@@ -96,6 +96,7 @@ oneway interface IStatusBar
 
     void showAssistDisclosure();
     void startAssist(in Bundle args);
+    void screenPinningStateChanged(boolean enabled);
 
     // SystemUI Restart method for masquerade
     void restartUI();

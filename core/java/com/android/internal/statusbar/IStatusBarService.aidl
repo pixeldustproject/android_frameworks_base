@@ -71,4 +71,6 @@ interface IStatusBarService
 
     // SystemUI Restart API for masquerade
     void restartUI();
+    // Screen Pinning for alternate task managers (OmniSwitch, SlimRecents)
+    void screenPinningStateChanged(boolean enabled);
 }

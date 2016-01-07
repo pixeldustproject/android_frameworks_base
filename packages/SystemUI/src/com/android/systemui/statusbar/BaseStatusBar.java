@@ -1408,6 +1408,11 @@ public abstract class BaseStatusBar extends SystemUI implements
         Process.killProcess(Process.myPid());
     }
 
+    @Override
+    public void screenPinningStateChanged(boolean enabled) {
+        Log.d(TAG, "StatusBar API screenPinningStateChanged = " + enabled);
+    }
+
     protected H createHandler() {
          return new H();
     }
