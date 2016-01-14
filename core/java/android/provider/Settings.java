@@ -3980,6 +3980,13 @@ public final class Settings {
         public static final String POWERMENU_ASSIST = "powermenu_assist";
 
         /**
+         * whether to enable or disable vibration on succesful fingerprint auth
+         *
+         * @hide
+         */
+        public static final String FINGERPRINT_SUCCESS_VIB = "fingerprint_success_vib";
+
+        /**
          * Three Finger Gesture from Oppo
          * @hide
          */
