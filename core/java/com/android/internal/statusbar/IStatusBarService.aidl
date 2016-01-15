@@ -17,6 +17,7 @@
 package com.android.internal.statusbar;
 
 import android.content.ComponentName;
+import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.service.notification.StatusBarNotification;
@@ -68,7 +69,15 @@ interface IStatusBarService
     void clickTile(in ComponentName tile);
     void handleSystemNavigationKey(in int key);
     void setAutoRotate(boolean enabled);
+    void showCustomIntentAfterKeyguard(in Intent intent);
 
     // SystemUI Restart API for masquerade
     void restartUI();
+
+    /**
+     * SlimActions additions
+     */
+    void toggleScreenshot();
+    void toggleLastApp();
+    void toggleKillApp();
 }
