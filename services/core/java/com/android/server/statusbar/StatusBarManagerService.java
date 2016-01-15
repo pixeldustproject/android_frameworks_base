@@ -19,6 +19,7 @@ package com.android.server.statusbar;
 import android.app.StatusBarManager;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Rect;
 import android.os.Binder;
@@ -678,10 +679,149 @@ public class StatusBarManagerService extends IStatusBarService.Stub {
     }
 
     @Override
+    public void toggleRecentApps() {
+        if (mBar != null) {
+            try {
+                mBar.toggleRecentApps();
+            } catch (RemoteException ex) {}
+        }
+    }
+
+    @Override
+    public void preloadRecentApps() {
+        if (mBar != null) {
+            try {
+                mBar.preloadRecentApps();
+            } catch (RemoteException ex) {}
+        }
+    }
+
+    @Override
+    public void cancelPreloadRecentApps() {
+        if (mBar != null) {
+            try {
+                mBar.cancelPreloadRecentApps();
+            } catch (RemoteException ex) {}
+        }
+    }
+
+    @Override
+    public void showRecentApps(boolean triggeredFromAltTab) {
+        if (mBar != null) {
+            try {
+                mBar.showRecentApps(triggeredFromAltTab);
+            } catch (RemoteException ex) {}
+        }
+    }
+
+    @Override
+    public void hideRecentApps(boolean triggeredFromAltTab, boolean triggeredFromHomeKey) {
+        if (mBar != null) {
+            try {
+                mBar.hideRecentApps(triggeredFromAltTab, triggeredFromHomeKey);
+            } catch (RemoteException ex) {}
+        }
+    }
+
+    @Override
+    public void setCurrentUser(int newUserId) {
+        if (SPEW) Slog.d(TAG, "Setting current user to user " + newUserId);
+        mCurrentUserId = newUserId;
+    }
+
+    @Override
+    public void setWindowState(int window, int state) {
+        if (mBar != null) {
+            try {
+                mBar.setWindowState(window, state);
+            } catch (RemoteException ex) {}
+        }
+    }
+
+    @Override
+    public void appTransitionPending() {
+        if (mBar != null) {
+            try {
+                mBar.appTransitionPending();
+            } catch (RemoteException ex) {}
+        }
+    }
+
+    @Override
+    public void toggleLastApp() {
+        if (mBar != null) {
+            try {
+                mBar.toggleLastApp();
+            } catch (RemoteException ex) {}
+        }
+    }
+
+    @Override
+    public void toggleKillApp() {
+        if (mBar != null) {
+            try {
+                mBar.toggleKillApp();
+            } catch (RemoteException ex) {}
+        }
+    }
+
+    @Override
+    public void appTransitionCancelled() {
+        if (mBar != null) {
+            try {
+                mBar.appTransitionCancelled();
+            } catch (RemoteException ex) {}
+        }
+    }
+
+    @Override
+    public void appTransitionStarting(long statusBarAnimationsStartTime,
+            long statusBarAnimationsDuration) {
+        if (mBar != null) {
+            try {
+                mBar.appTransitionStarting(
+                        statusBarAnimationsStartTime, statusBarAnimationsDuration);
+            } catch (RemoteException ex) {}
+        }
+    }
+
+    @Override
+    public void startAssist(Bundle args) {
+        if (mBar != null) {
+            try {
+                mBar.startAssist(args);
+            } catch (RemoteException ex) {}
+        }
+    }
+
+    @Override
     public void setAutoRotate(boolean enabled) {
         if (mBar != null) {
             try {
                 mBar.setAutoRotate(enabled);
+            } catch (RemoteException ex) {}
+        }
+    }
+
+    /**
+     * Ask keyguard to invoke a custom intent after dismissing keyguard
+     * @hide
+     */
+    @Override
+    public void showCustomIntentAfterKeyguard(Intent intent) {
+        enforceStatusBarService();
+        if (mBar != null) {
+            try {
+                mBar.showCustomIntentAfterKeyguard(intent);
+            } catch (RemoteException ex) {}
+        }
+    }
+
+    @Override
+    public void toggleScreenshot() {
+        if (mBar != null) {
+            try {
+                mBar.toggleScreenshot();
             } catch (RemoteException ex) {}
         }
     }

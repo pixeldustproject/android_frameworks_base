@@ -17,6 +17,7 @@
 package com.android.internal.statusbar;
 
 import android.content.ComponentName;
+import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.service.notification.StatusBarNotification;
@@ -68,6 +69,8 @@ oneway interface IStatusBar
     void dismissKeyboardShortcutsMenu();
     void toggleKeyboardShortcutsMenu(int deviceId);
 
+    void showCustomIntentAfterKeyguard(inout Intent intent);
+
     /**
      * Notifies the status bar that an app transition is pending to delay applying some flags with
      * visual impact until {@link #appTransitionReady} is called.
@@ -118,4 +121,11 @@ oneway interface IStatusBar
     void remQsTile(in ComponentName tile);
     void clickQsTile(in ComponentName tile);
     void handleSystemNavigationKey(in int key);
+
+    /**
+     * SlimActions additions
+     */
+    void toggleScreenshot();
+    void toggleLastApp();
+    void toggleKillApp();
 }
