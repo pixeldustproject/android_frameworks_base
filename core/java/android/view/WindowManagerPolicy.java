@@ -1444,4 +1444,11 @@ public interface WindowManagerPolicy {
      * freezeOrThawRotation(-1) is called or reboot the devcie.
      */
     public void freezeOrThawRotation(int rotation);
+
+    /**
+     * Toggle global menu
+     *
+     * @hide
+     */
+    public void toggleGlobalMenu();
 }

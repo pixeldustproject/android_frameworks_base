@@ -26,6 +26,10 @@ public class ActionChecker {
 
     private static final ArrayList<String> mConfigs = new ArrayList<String>();
 
+    static {
+        mConfigs.add(Settings.System.NAVIGATION_BAR_CONFIG);
+    }
+
     public static boolean actionConfigContainsAction(ActionConfig config, String action) {
         return action.equals(config.getClickAction())
                 || action.equals(config.getLongpressAction());

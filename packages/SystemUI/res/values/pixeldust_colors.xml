@@ -50,4 +50,7 @@
     <color name="battery_normal_charge_level_tile">#ffffff</color> <!-- level color when >15 for the tile battery -->
     <color name="battery_low_charge_level_tile">@color/battery_charge_level_low_level</color> <!-- level color when >15 for the tile battery -->
     <color name="status_bar_battery_level_text_color">#ffffff</color> <!-- percentage text outside battery icon -->
+
+    <!-- Navigation bar -->
+    <color name="navigationbar_button_default_color">#FFFFFFFF</color>
 </resources>
