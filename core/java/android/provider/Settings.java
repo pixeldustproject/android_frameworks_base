@@ -3675,6 +3675,12 @@ public final class Settings {
         public static final String QUICK_SETTINGS_TILES_VIBRATE = "quick_settings_vibrate";
 
         /**
+         * Defines the global heads up notification snooze
+         * @hide
+         */
+        public static final String HEADS_UP_NOTIFICATION_SNOOZE = "heads_up_notification_snooze";
+
+        /**
          * Heads up timeout configuration
          * @hide
          */
