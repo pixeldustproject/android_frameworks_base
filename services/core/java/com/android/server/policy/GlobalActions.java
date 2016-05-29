@@ -120,6 +120,7 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
     private static final String GLOBAL_ACTION_KEY_POWER = "power";
     private static final String GLOBAL_ACTION_KEY_REBOOT = "reboot";
     private static final String GLOBAL_ACTION_KEY_SCREENSHOT = "screenshot";
+    private static final String GLOBAL_ACTION_KEY_SCREENRECORD = "screenrecord";
     private static final String GLOBAL_ACTION_KEY_TORCH = "torch";
     private static final String GLOBAL_ACTION_KEY_AIRPLANE = "airplane";
     private static final String GLOBAL_ACTION_KEY_BUGREPORT = "bugreport";
@@ -311,22 +312,27 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
             if (GLOBAL_ACTION_KEY_REBOOT.equals(actionKey)) {
                 if (Settings.System.getInt(mContext.getContentResolver(),
                         Settings.System.POWERMENU_REBOOT, 1) == 1) {
-                    mItems.add(new RebootAction());
+                mItems.add(new RebootAction());
                 }
             } else if (GLOBAL_ACTION_KEY_SCREENSHOT.equals(actionKey)) {
                 if (Settings.System.getInt(mContext.getContentResolver(),
                         Settings.System.POWERMENU_SCREENSHOT, 1) == 1) {
-                    mItems.add(ScreenshotAction());
+                    mItems.add(new ScreenshotAction());
+                }
+            } else if (GLOBAL_ACTION_KEY_SCREENRECORD.equals(actionKey)) {
+                if (Settings.System.getInt(mContext.getContentResolver(),
+                        Settings.System.POWERMENU_SCREENRECORD, 1) == 1) {
+                    mItems.add(getScreenRecordAction());
                 }
             } else if (GLOBAL_ACTION_KEY_TORCH.equals(actionKey)) {
                 if (Settings.System.getInt(mContext.getContentResolver(),
                         Settings.System.POWERMENU_TORCH, 0) != 0) {
-                    mItems.add(getTorchToggleAction());
+                mItems.add(getTorchToggleAction());
                 }
             } else if (GLOBAL_ACTION_KEY_AIRPLANE.equals(actionKey)) {
                 if (Settings.System.getInt(mContext.getContentResolver(),
                         Settings.System.POWERMENU_AIRPLANE, 1) == 1) {
-                    mItems.add(mAirplaneModeOn);
+                mItems.add(mAirplaneModeOn);
                 }
             } else if (GLOBAL_ACTION_KEY_BUGREPORT.equals(actionKey)) {
                 if (Settings.Global.getInt(mContext.getContentResolver(),
@@ -498,22 +504,33 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
         }
     }
 
-    private Action ScreenshotAction() {
-        return new SinglePressAction(com.android.internal.R.drawable.ic_lock_power_screenshot,
-                R.string.global_action_screenshot) {
+    private final class ScreenshotAction extends SinglePressAction implements LongPressAction {
+        private ScreenshotAction() {
+            super(com.android.internal.R.drawable.ic_lock_power_screenshot,
+                R.string.global_action_screenshot);
+        }
 
-            public void onPress() {
-                takeScreenshot();
-            }
+        @Override
+        public boolean onLongPress() {
+            takeScreenshot(2);
+            mHandler.sendEmptyMessage(MESSAGE_DISMISS);
+            return true;
+        }
 
-            public boolean showDuringKeyguard() {
-                return true;
-            }
+        @Override
+        public boolean showDuringKeyguard() {
+            return true;
+        }
 
-            public boolean showBeforeProvisioning() {
-                return true;
-            }
-        };
+        @Override
+        public boolean showBeforeProvisioning() {
+            return true;
+        }
+
+        @Override
+        public void onPress() {
+            takeScreenshot(1);
+        }
     }
 
     private CameraManager mCameraManager;
@@ -529,6 +546,24 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
             mTorchEnabled = enabled;
         }
     };
+
+    private Action getScreenRecordAction() {
+        return new SinglePressAction(com.android.internal.R.drawable.ic_lock_power_screen_record,
+                R.string.global_action_screen_record) {
+
+            public void onPress() {
+                takeScreenrecord();
+            }
+
+            public boolean showDuringKeyguard() {
+                return true;
+            }
+
+            public boolean showBeforeProvisioning() {
+                return true;
+            }
+        };
+    }
 
     private Action getTorchToggleAction() {
         return new SinglePressAction(com.android.internal.R.drawable.ic_lock_power_torch,
@@ -825,7 +860,7 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
         }
     };
 
-    private void takeScreenshot() {
+    private void takeScreenshot(int type) {
         synchronized (mScreenshotLock) {
             if (mScreenshotConnection != null) {
                 return;
@@ -842,7 +877,7 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
                             return;
                         }
                         Messenger messenger = new Messenger(service);
-                        Message msg = Message.obtain(null, 1);
+                        Message msg = Message.obtain(null, type);
                         final ServiceConnection myConn = this;
                         Handler h = new Handler(mHandler.getLooper()) {
                             @Override
@@ -861,7 +896,7 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
 
                         /* wait for the dialog box to close */
                         try {
-                            Thread.sleep(1000);
+                            Thread.sleep(750);
                         } catch (InterruptedException ie) {
                             // Do nothing
                         }
@@ -880,6 +915,70 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
             if (mContext.bindService(intent, conn, Context.BIND_AUTO_CREATE)) {
                 mScreenshotConnection = conn;
                 mHandler.postDelayed(mScreenshotTimeout, 10000);
+            }
+        }
+    }
+
+    /**
+     * functions needed for taking screen record.
+     */
+    final Object mScreenrecordLock = new Object();
+    ServiceConnection mScreenrecordConnection = null;
+
+    final Runnable mScreenrecordTimeout = new Runnable() {
+        @Override public void run() {
+            synchronized (mScreenrecordLock) {
+                if (mScreenrecordConnection != null) {
+                    mContext.unbindService(mScreenrecordConnection);
+                    mScreenrecordConnection = null;
+                }
+            }
+        }
+    };
+
+    private void takeScreenrecord() {
+       synchronized (mScreenrecordLock) {
+            if (mScreenrecordConnection != null) {
+                return;
+            }
+            ComponentName cn = new ComponentName("com.android.systemui",
+                    "com.android.systemui.purenexus.screenrecord.TakeScreenrecordService");
+            Intent intent = new Intent();
+            intent.setComponent(cn);
+            ServiceConnection conn = new ServiceConnection() {
+                @Override
+                public void onServiceConnected(ComponentName name, IBinder service) {
+                    synchronized (mScreenrecordLock) {
+                        Messenger messenger = new Messenger(service);
+                        Message msg = Message.obtain(null, 1);
+                        final ServiceConnection myConn = this;
+                        Handler h = new Handler(mHandler.getLooper()) {
+                            @Override
+                            public void handleMessage(Message msg) {
+                                synchronized (mScreenrecordLock) {
+                                    if (mScreenrecordConnection == myConn) {
+                                        mContext.unbindService(mScreenrecordConnection);
+                                        mScreenrecordConnection = null;
+                                        mHandler.removeCallbacks(mScreenrecordTimeout);
+                                    }
+                                }
+                            }
+                        };
+                        msg.replyTo = new Messenger(h);
+                        msg.arg1 = msg.arg2 = 0;
+                        try {
+                            messenger.send(msg);
+                        } catch (RemoteException e) {
+                        }
+                    }
+                }
+                @Override
+                public void onServiceDisconnected(ComponentName name) {}
+            };
+            if (mContext.bindServiceAsUser(
+                    intent, conn, Context.BIND_AUTO_CREATE, UserHandle.CURRENT)) {
+                mScreenrecordConnection = conn;
+                mHandler.postDelayed(mScreenrecordTimeout, 31 * 60 * 1000);
             }
         }
     }
