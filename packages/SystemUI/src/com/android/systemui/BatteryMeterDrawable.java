@@ -16,7 +16,10 @@
 
 package com.android.systemui;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.ArgbEvaluator;
+import android.animation.ValueAnimator;
 import android.annotation.Nullable;
 import android.content.Context;
 import android.content.res.Resources;
@@ -118,6 +121,7 @@ public class BatteryMeterDrawable extends Drawable implements
     private StopMotionVectorDrawable mLevelDrawable;
     private Drawable mBoltDrawable;
     private Drawable mPlusDrawable;
+    private ValueAnimator mAnimator;
 
     private int mTextGravity;
 
@@ -274,6 +278,11 @@ public class BatteryMeterDrawable extends Drawable implements
             //the battery icon, so we'll set the pct txt color to white to have it more visible on the frame background
             isPctToBeWhiteOrRed = true;
         }
+
+        if (mStyle == BATTERY_STYLE_SOLID) {
+            animateSolidBattery(level, pluggedIn, charging);
+        }
+
         postInvalidate();
     }
 
@@ -355,6 +364,37 @@ public class BatteryMeterDrawable extends Drawable implements
             }
         }
         return color; //mColors[3] (white)
+    }
+
+    public void animateSolidBattery(int level, boolean pluggedIn, boolean charging) {
+        if (charging) {
+            if (mAnimator != null) mAnimator.cancel();
+
+            final int defaultAlpha = mLevelDrawable.getAlpha();
+            mAnimator = ValueAnimator.ofInt(defaultAlpha, 0, defaultAlpha);
+            mAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    mLevelDrawable.setAlpha((int) animation.getAnimatedValue());
+                    invalidateSelf();
+                }
+            });
+            mAnimator.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationCancel(Animator animation) {
+                    mLevelDrawable.setAlpha(defaultAlpha);
+                    mAnimator = null;
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    mLevelDrawable.setAlpha(defaultAlpha);
+                    mAnimator = null;
+                }
+            });
+            mAnimator.setDuration(2000);
+            mAnimator.start();
+        }
     }
 
     public void setDarkIntensity(float darkIntensity) {
