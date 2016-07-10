@@ -16,4 +16,8 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
     <string name="weather_info_not_available">Wetterinformationen werden geladen...</string>
+
+    <!-- Indication on the keyguard that is shown when the device is charging with a dash charger. Should match keyguard_plugged_in_dash_charging [CHAR LIMIT=40]-->
+    <string name="keyguard_indication_dash_charging_time">Schnell-Lademodus (<xliff:g id="charging_time_left" example="4 hours and 2 minutes">%s</xliff:g> bis zur vollständigen Ladung)</string>
+    <string name="keyguard_plugged_in_dash_charging">Schnell-Lademodus</string>
 </resources>
