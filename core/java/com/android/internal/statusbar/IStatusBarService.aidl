@@ -73,4 +73,11 @@ interface IStatusBarService
     void restartUI();
     // Screen Pinning for alternate task managers (OmniSwitch, SlimRecents)
     void screenPinningStateChanged(boolean enabled);
+
+    // Start DU methods
+    void toggleRecentApps();
+    void toggleSplitScreen();
+    void preloadRecentApps();
+    void cancelPreloadRecentApps();
+    void startAssist(in Bundle args);
 }
