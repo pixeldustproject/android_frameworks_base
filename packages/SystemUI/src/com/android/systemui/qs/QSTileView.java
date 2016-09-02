@@ -41,6 +41,8 @@ public class QSTileView extends QSTileBaseView {
     protected TextView mLabel;
     private ImageView mPadLock;
 
+    private View mLabelParent;
+
     public QSTileView(Context context, QSIconView icon) {
         this(context, icon, false);
     }
@@ -62,8 +64,8 @@ public class QSTileView extends QSTileBaseView {
         setGravity(Gravity.CENTER);
     }
 
-    TextView getLabel() {
-        return mLabel;
+    View getLabelParent() {
+        return mLabelParent;
     }
 
     private void updateTopPadding() {
@@ -90,6 +92,7 @@ public class QSTileView extends QSTileBaseView {
         mLabel = (TextView) view.findViewById(R.id.tile_label);
         mPadLock = (ImageView) view.findViewById(R.id.restricted_padlock);
         addView(view);
+        mLabelParent = view;
     }
 
     @Override
