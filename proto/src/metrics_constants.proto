@@ -2259,7 +2259,9 @@ message MetricsEvent {
     PIXELDUST = 500;
 
     // BEGIN PA CONSTANTS
-    // Settings -> Backup & Reset -> Feature Preferences
-    FEATURE_PREFERENCES = 501;
+    // Immersive mode
+    QS_IMMERSIVE = 501;
+    QS_IMMERSIVE_DETAILS = 502;
+    QS_IMMERSIVE_TOGGLE = 503;
   }
 }

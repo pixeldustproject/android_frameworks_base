@@ -7745,6 +7745,22 @@ public final class Settings {
         public static final String QS_DATA_ADVANCED = "qs_data_advanced";
 
         /**
+         * Used to store the last used system ui flags to make qs settings stick after reboot
+         * @hide
+         */
+        public static final String LAST_SYSTEM_DESIGN_FLAGS = "last_system_design_flags";
+
+        /**
+         * Setting to record how the look and feel of the system should be tweaked. This
+         * should be used in combination with magic.
+         *
+         * @see android.view.View#SYSTEM_DESIGN_FLAG_IMMERSIVE_NAV
+         * @see android.view.View#SYSTEM_DESIGN_FLAG_IMMERSIVE_STATUS
+         * @hide
+         */
+        public static final String SYSTEM_DESIGN_FLAGS = "system_design_flags";
+
+        /**
          * This are the settings to be backed up.
          *
          * NOTE: Settings are backed up and restored in the order they appear
@@ -9795,6 +9811,12 @@ public final class Settings {
          * cause animations to end immediately. The default value is 1.
          */
         public static final String ANIMATOR_DURATION_SCALE = "animator_duration_scale";
+
+        /**
+         * Use EdgeGesture Service for system gestures in PhoneWindowManager
+         * @hide
+         */
+        public static final String USE_EDGE_SERVICE_FOR_GESTURES = "edge_service_for_gestures";
 
         /**
          * Scaling factor for normal window animations. Setting to 0 will
