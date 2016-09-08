@@ -3687,6 +3687,13 @@ public final class Settings {
         public static final String HEADS_UP_TIMEOUT = "heads_up_timeout";
 
         /**
+         * Which applications to enable heads up notifications for
+         *
+         * @hide
+         */
+        public static final String HEADS_UP_WHITELIST_VALUES = "heads_up_whitelist_values";
+
+        /**
          * Whether to allow notifications with the screen on or DayDreams.
          * The value is boolean (1 or 0). Default will always be false.
          * @hide
@@ -3948,6 +3955,7 @@ public final class Settings {
          * @hide
          */
         public static final String THREE_FINGER_GESTURE = "three_finger_gesture";
+
 
         /**
          * Settings to backup. This is here so that it's in the same place as the settings
