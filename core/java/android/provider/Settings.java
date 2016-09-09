@@ -3700,6 +3700,16 @@ public final class Settings {
         public static final String HEADS_UP_WHITELIST_VALUES = "heads_up_whitelist_values";
 
         /**
+         * Immersive recents options
+         *
+         * 0 = Default AOSP look
+         * 1 = Statusbar only
+         * 2 = Navbar only
+         * 3 = Fullscreen
+         */
+        public static final String IMMERSIVE_RECENTS = "immersive_recents";
+
+        /**
          * Whether to allow notifications with the screen on or DayDreams.
          * The value is boolean (1 or 0). Default will always be false.
          * @hide
