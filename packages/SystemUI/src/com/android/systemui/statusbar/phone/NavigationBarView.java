@@ -242,16 +242,22 @@ public class NavigationBarView extends LinearLayout {
                 Settings.Secure.ONE_HANDED_MODE_UI, 0, UserHandle.USER_CURRENT) == 1) {
             mSlideTouchEvent.handleTouchEvent(event);
         }
+
+        boolean doubleTapNav = Settings.System.getIntForUser(
+                      mContext.getContentResolver(), Settings.System.DOUBLE_TAP_SLEEP_NAVBAR, 0, UserHandle.USER_CURRENT) == 1;
         if (mGestureHelper.onTouchEvent(event)) {
+            if (doubleTapNav) {
+                mDoubleTapGesture.onTouchEvent(event);
+            }
             return true;
         }
         if (mDeadZone != null && event.getAction() == MotionEvent.ACTION_OUTSIDE) {
             mDeadZone.poke(event);
         }
-        if (Settings.System.getIntForUser(mContext.getContentResolver(),
-                    Settings.System.DOUBLE_TAP_SLEEP_NAVBAR, 0, UserHandle.USER_CURRENT) == 1) {
+        if (doubleTapNav) {
             mDoubleTapGesture.onTouchEvent(event);
         }
+
         return super.onTouchEvent(event);
     }
 
