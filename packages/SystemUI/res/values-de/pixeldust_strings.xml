@@ -134,4 +134,10 @@
     <string name="pie_state_name">Pie Controls</string>
     <string name="pie_state_summary">Pie Controls im Immersive Mode verwenden</string>
     <string name="pie_battery_level">"AKKUSTANDSANZEIGE "</string>
+
+    <!-- OnTheSpot: Quick Settings quick pull-down feature description message. [CHAR LIMIT=NONE] -->
+    <string name="quick_settings_quick_pull_down">Möchtest du an der rechten Seite der Statusleiste die Schnelleinstellungen schnell herunterziehen können?</string>
+    <!-- OnTheSpot: Title of the Quick Settings quick pull-down feature for the reset dialog. [CHAR LIMIT=NONE] -->
+    <string name="quick_settings_quick_pull_down_name">Schnelleinstellungen schnell herunterziehen</string>
+    <string name="quick_settings_quick_pull_down_summary">Die Schnelleinstellungen werden automatisch durch Herunterziehen von der rechten Bildschirmoberkante aufgeklappt</string>
 </resources>
