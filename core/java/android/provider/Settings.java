@@ -3649,7 +3649,6 @@ public final class Settings {
          * @hide
          */
         public static final String BATTERY_LIGHT_PULSE = "battery_light_pulse";
-
         /**
          * Enable double tap gesture anywhere on the lock screen put device to sleep
          * @hide
@@ -3784,6 +3783,12 @@ public final class Settings {
          * @hide
          */
         public static final String STATUSBAR_CLOCK_DATE_POSITION = "statusbar_clock_date_position";
+
+        /**
+         * Whether to control brightness from status bar
+         * @hide
+         */
+        public static final String STATUS_BAR_BRIGHTNESS_CONTROL = "status_bar_brightness_control";
 
         /**
          * Whether volume button press shuld be treated as wake key
