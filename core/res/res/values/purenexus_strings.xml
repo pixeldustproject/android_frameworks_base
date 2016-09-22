@@ -29,6 +29,8 @@
     <string name="reboot_progress">Rebooting\u2026</string>
     <!-- Screenshot in the power menu -->
     <string name="powermenu_screenshot">Screenshot</string>
+    <!-- Powermenu Torch -->
+    <string name="global_action_torch">Flashlight</string>
 
     <string name="default_string">Default</string>
 </resources>
