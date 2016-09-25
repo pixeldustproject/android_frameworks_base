@@ -73,4 +73,6 @@ interface IStatusBarService
     void restartUI();
     // Screen Pinning for alternate task managers (OmniSwitch, SlimRecents)
     void screenPinningStateChanged(boolean enabled);
+
+    void toggleOrientationListener(boolean enable);
 }
