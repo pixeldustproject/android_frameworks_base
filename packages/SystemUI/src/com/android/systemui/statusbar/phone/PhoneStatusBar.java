@@ -455,11 +455,11 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private int mFpSwipeCallActions;
 
     // for disabling the status bar
-    int mDisabled1 = 0;
+    protected int mDisabled1 = 0;
     int mDisabled2 = 0;
 
     // tracking calls to View.setSystemUiVisibility()
-    int mSystemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE;
+    protected int mSystemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE;
     private final Rect mLastFullscreenStackBounds = new Rect();
     private final Rect mLastDockedStackBounds = new Rect();
 
@@ -713,7 +713,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     private int mInteractingWindows;
     private boolean mAutohideSuspended;
-    private int mStatusBarMode;
+    protected int mStatusBarMode;
     private int mNavigationBarMode;
     private int mMaxKeyguardNotifications;
 
@@ -1785,7 +1785,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         }
     }
 
-    private void prepareNavigationBarView() {
+    protected void prepareNavigationBarView() {
         mNavigationBarView.setSwapKeys(mUseSwapKey);
         mNavigationBarView.reorient();
 
@@ -3693,7 +3693,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 enabled ? 1 : 0);
     }
 
-    private int computeBarMode(int oldVis, int newVis, BarTransitions transitions,
+    protected int computeBarMode(int oldVis, int newVis, BarTransitions transitions,
             int transientFlag, int translucentFlag, int transparentFlag) {
         final int oldMode = barMode(oldVis, transientFlag, translucentFlag, transparentFlag);
         final int newMode = barMode(newVis, transientFlag, translucentFlag, transparentFlag);
@@ -3800,7 +3800,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mHandler.postDelayed(mAutohide, AUTOHIDE_TIMEOUT_MS);
     }
 
-    private void checkUserAutohide(View v, MotionEvent event) {
+    protected void checkUserAutohide(View v, MotionEvent event) {
         if ((mSystemUiVisibility & STATUS_OR_NAV_TRANSIENT) != 0  // a transient bar is revealed
                 && event.getAction() == MotionEvent.ACTION_OUTSIDE // touch outside the source bar
                 && event.getX() == 0 && event.getY() == 0  // a touch outside both bars
