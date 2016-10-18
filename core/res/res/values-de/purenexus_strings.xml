@@ -59,4 +59,9 @@
   <!-- Single handed mode -->
   <string name="singlehandmode_click_hint_message">Tippen Sie außerhalb des Bildschirms, um die Mini-Ansicht zu beenden</string>
   <string name="singlehandmode_slide_hint_message">Wischen Sie mit ihrem Finger über die Navigationsleiste, um zwischen Standard und Mini-Bildschirm zu wechseln</string>
+
+    <!-- Title of an application permission, listed so the user can choose whether they want to allow the application to do this. -->
+    <string name="permlab_fakePackageSignature">Spoof Package Signatur</string>
+    <!-- Description of an application permission, listed so the user can choose whether they want to allow the application to do this. -->
+    <string name="permdesc_fakePackageSignature">Erlaubt es einer App sich als eine andere App auszugeben. Schädliche Anwendungen können diese Berechtigung nutzen, um auf private Anwendungsdaten zuzugreifen. Es gilt daher äußerste Vorsicht im Umgang mit dieser Berechtigung!</string>
 </resources>
