@@ -97,6 +97,8 @@ public class StatusBarWindowView extends FrameLayout {
 
     private int mStatusBarHeaderHeight;
 
+    private boolean mDozeWakeupDoubleTap;
+    private GestureDetector mDozeWakeupDoubleTapGesture;
     private boolean mDoubleTapToSleepEnabled;
     private GestureDetector mDoubleTapGesture;
     private Handler mHandler = new Handler();
@@ -218,6 +220,16 @@ public class StatusBarWindowView extends FrameLayout {
             }
         });
 
+        mDozeWakeupDoubleTapGesture = new GestureDetector(mContext,
+                new GestureDetector.SimpleOnGestureListener() {
+            @Override
+            public boolean onDoubleTap(MotionEvent e) {
+                mService.wakeUpIfDozing(e.getEventTime(), e);
+
+                return true;
+            }
+        });
+
         // We need to ensure that our window doesn't suffer from overdraw which would normally
         // occur if our window is translucent. Since we are drawing the whole window anyway with
         // the scrim, we don't need the window to be cleared in the beginning.
@@ -304,10 +316,16 @@ public class StatusBarWindowView extends FrameLayout {
                 && mStackScrollLayout.getVisibility() == View.VISIBLE
                 && mService.getBarState() == StatusBarState.KEYGUARD
                 && !mService.isBouncerShowing()) {
-            intercept = mDragDownHelper.onInterceptTouchEvent(ev);
+            if (!mDozeWakeupDoubleTap || (mDozeWakeupDoubleTap && !mService.isDozing())) {
+                intercept = mDragDownHelper.onInterceptTouchEvent(ev);
+            }
             // wake up on a touch down event, if dozing
-            if (ev.getActionMasked() == MotionEvent.ACTION_DOWN) {
-                mService.wakeUpIfDozing(ev.getEventTime(), ev);
+            if (mDozeWakeupDoubleTap) {
+                mDozeWakeupDoubleTapGesture.onTouchEvent(ev);
+            } else {
+                if (ev.getActionMasked() == MotionEvent.ACTION_DOWN) {
+                    mService.wakeUpIfDozing(ev.getEventTime(), ev);
+                }
             }
         }
         if (!intercept) {
@@ -739,6 +757,8 @@ public class StatusBarWindowView extends FrameLayout {
             ContentResolver resolver = mContext.getContentResolver();
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.DOUBLE_TAP_SLEEP_GESTURE), false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.DOUBLE_TAP_WAKE_DOZE), false, this, UserHandle.USER_ALL);
             update();
         }
 
@@ -761,6 +781,8 @@ public class StatusBarWindowView extends FrameLayout {
             ContentResolver resolver = mContext.getContentResolver();
             mDoubleTapToSleepEnabled = Settings.System.getIntForUser(
                     resolver, Settings.System.DOUBLE_TAP_SLEEP_GESTURE, 0, UserHandle.USER_CURRENT) == 1;
+            mDozeWakeupDoubleTap = Settings.System.getIntForUser(resolver,
+                    Settings.System.DOUBLE_TAP_WAKE_DOZE, 0, UserHandle.USER_CURRENT) == 1;
         }
     }
 }
