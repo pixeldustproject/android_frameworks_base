@@ -4076,6 +4076,12 @@ public final class Settings {
         public static final String ANIM_TILE_DURATION = "anim_tile_duration";
 
          /**
+         * show lockscreen alarm
+         *  @hide
+         */
+        public static final String SHOW_LOCKSCREEN_ALARM = "show_lockscreen_alarm";
+
+         /**
          * Change quick settings tiles interpolator
          *
          * @hide
