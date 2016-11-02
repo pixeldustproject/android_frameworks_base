@@ -1089,6 +1089,7 @@
             6 - Launch Camera
             7 - Action Sleep
             8 - Last app
+            9 - Toggle split screen
          This needs to match the constants in
          policy/src/com/android/internal/policy/impl/PhoneWindowManager.java
     -->
@@ -1104,6 +1105,7 @@
             6 - Launch Camera
             7 - Action Sleep
             8 - Last app
+            9 - Toggle split screen
          This needs to match the constants in
          policy/src/com/android/internal/policy/impl/PhoneWindowManager.java
     -->
@@ -1119,6 +1121,7 @@
             6 - Launch Camera
             7 - Action Sleep
             8 - Last app
+            9 - Toggle split screen
          This needs to match the constants in
          policy/src/com/android/internal/policy/impl/PhoneWindowManager.java
     -->
