@@ -507,6 +507,7 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
     private final class ScreenshotAction extends SinglePressAction implements LongPressAction {
         private ScreenshotAction() {
             super(com.android.internal.R.drawable.ic_lock_power_screenshot,
+
                 R.string.global_action_screenshot);
         }
 
