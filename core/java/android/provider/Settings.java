@@ -3905,6 +3905,19 @@ public final class Settings {
         public static final String POWERMENU_USERS = "powermenu_users";
 
         /**
+         * Whether to display power in the voiceassist menu
+         *
+         * @hide
+         */
+        public static final String POWERMENU_VOICEASSIST = "powermenu_voiceassist";
+        /**
+         * Whether to display power in the assist menu
+         *
+         * @hide
+         */
+        public static final String POWERMENU_ASSIST = "powermenu_assist";
+
+        /**
          * Settings to backup. This is here so that it's in the same place as the settings
          * keys and easy to update.
          *

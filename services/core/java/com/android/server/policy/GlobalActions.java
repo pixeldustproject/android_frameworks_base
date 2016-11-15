@@ -183,6 +183,10 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
 
         // Set the initial status of airplane mode toggle
         mAirplaneState = getUpdatedAirplaneToggleState();
+
+        // get notified of torch state changes
+        mCameraManager = (CameraManager) mContext.getSystemService(Context.CAMERA_SERVICE);
+        mCameraManager.registerTorchCallback(torchCallback, null);
     }
 
     /**
@@ -285,10 +289,8 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
         String[] defaultActions = mContext.getResources().getStringArray(
                 com.android.internal.R.array.config_globalActionsList);
 
-        //Always add power, reboot and screenshot buttons
+        //Always add power button
         mItems.add(new PowerAction());
-        mItems.add(new RebootAction());
-        mItems.add(getScreenshotAction());
 
         ArraySet<String> addedKeys = new ArraySet<String>();
         for (int i = 0; i < defaultActions.length; i++) {
@@ -297,15 +299,10 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
                 // If we already have added this, don't add it again.
                 continue;
             }
-            if (GLOBAL_ACTION_KEY_POWER.equals(actionKey)) {
-                if (Settings.System.getInt(mContext.getContentResolver(),
-                        Settings.System.POWERMENU_POWER, 1) == 1) {
-                mItems.add(new PowerAction());
-                }
-            } else if (GLOBAL_ACTION_KEY_REBOOT.equals(actionKey)) {
+            if (GLOBAL_ACTION_KEY_REBOOT.equals(actionKey)) {
                 if (Settings.System.getInt(mContext.getContentResolver(),
                         Settings.System.POWERMENU_REBOOT, 1) == 1) {
-                mItems.add(new RebootAction());
+                    mItems.add(new RebootAction());
                 }
             } else if (GLOBAL_ACTION_KEY_SCREENSHOT.equals(actionKey)) {
                 if (Settings.System.getInt(mContext.getContentResolver(),
@@ -315,44 +312,48 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
             } else if (GLOBAL_ACTION_KEY_TORCH.equals(actionKey)) {
                 if (Settings.System.getInt(mContext.getContentResolver(),
                         Settings.System.POWERMENU_TORCH, 0) != 0) {
-                mItems.add(getTorchToggleAction());
+                    mItems.add(getTorchToggleAction());
                 }
             } else if (GLOBAL_ACTION_KEY_AIRPLANE.equals(actionKey)) {
                 if (Settings.System.getInt(mContext.getContentResolver(),
                         Settings.System.POWERMENU_AIRPLANE, 1) == 1) {
-                mItems.add(mAirplaneModeOn);
+                    mItems.add(mAirplaneModeOn);
                 }
             } else if (GLOBAL_ACTION_KEY_BUGREPORT.equals(actionKey)) {
                 if (Settings.Global.getInt(mContext.getContentResolver(),
                         Settings.Global.BUGREPORT_IN_POWER_MENU, 0) != 0 && isCurrentUserOwner()) {
                     mItems.add(new BugReportAction());
                 }
-            } else if (GLOBAL_ACTION_KEY_SILENT.equals(actionKey)) {
+            } else if (GLOBAL_ACTION_KEY_SETTINGS.equals(actionKey)) {
                 if (Settings.System.getInt(mContext.getContentResolver(),
-                        Settings.System.POWERMENU_SOUNDPANEL, 1) == 1) {
-                    mItems.add(mSilentModeAction);
+                        Settings.System.POWERMENU_SETTINGS, 0) != 0) {
+                    mItems.add(getSettingsAction());
+                }
+            } else if (GLOBAL_ACTION_KEY_LOCKDOWN.equals(actionKey)) {
+                if (Settings.System.getInt(mContext.getContentResolver(),
+                        Settings.System.POWERMENU_LOCKDOWN, 0) != 0) {
+                    mItems.add(getLockdownAction());
                 }
             } else if (GLOBAL_ACTION_KEY_USERS.equals(actionKey)) {
                 if (Settings.System.getInt(mContext.getContentResolver(),
                         Settings.System.POWERMENU_USERS, 0) == 1) {
                     addUsersToMenu(mItems);
                 }
-            } else if (GLOBAL_ACTION_KEY_SETTINGS.equals(actionKey)) {
-                if (Settings.System.getInt(mContext.getContentResolver(),
-                        Settings.System.POWERMENU_SETTINGS, 0) != 0) {
-                mItems.add(getSettingsAction());
-                }
-            } else if (GLOBAL_ACTION_KEY_LOCKDOWN.equals(actionKey)) {
-                if (Settings.System.getInt(mContext.getContentResolver(),
-                        Settings.System.POWERMENU_LOCKDOWN, 0) != 0) {
-                mItems.add(getLockdownAction());
-                }
             } else if (GLOBAL_ACTION_KEY_VOICEASSIST.equals(actionKey)) {
-                mItems.add(getVoiceAssistAction());
+                if (Settings.System.getInt(mContext.getContentResolver(),
+                        Settings.System.POWERMENU_VOICEASSIST, 0) != 0) {
+                    mItems.add(getVoiceAssistAction());
+                }
             } else if (GLOBAL_ACTION_KEY_ASSIST.equals(actionKey)) {
-                mItems.add(getAssistAction());
-            } else if (GLOBAL_ACTION_KEY_RESTART.equals(actionKey)) {
-                mItems.add(new RestartAction());
+                if (Settings.System.getInt(mContext.getContentResolver(),
+                        Settings.System.POWERMENU_ASSIST, 0) != 0) {
+                    mItems.add(getAssistAction());
+                }
+            } else if (GLOBAL_ACTION_KEY_SILENT.equals(actionKey)) {
+                if (Settings.System.getInt(mContext.getContentResolver(),
+                        Settings.System.POWERMENU_SOUNDPANEL, 1) == 1) {
+                    mItems.add(mSilentModeAction);
+                }
             } else {
                 Log.e(TAG, "Invalid global action key " + actionKey);
             }
@@ -490,7 +491,7 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
 
     private Action ScreenshotAction() {
         return new SinglePressAction(com.android.internal.R.drawable.ic_lock_power_screenshot,
-                R.string.powermenu_screenshot) {
+                R.string.global_action_screenshot) {
 
             public void onPress() {
                 takeScreenshot();
@@ -506,20 +507,32 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
         };
     }
 
+    private CameraManager mCameraManager;
+    CameraManager.TorchCallback torchCallback = new CameraManager.TorchCallback() {
+        @Override
+        public void onTorchModeUnavailable(String cameraId) {
+            super.onTorchModeUnavailable(cameraId);
+        }
+
+        @Override
+        public void onTorchModeChanged(String cameraId, boolean enabled) {
+            super.onTorchModeChanged(cameraId, enabled);
+            mTorchEnabled = enabled;
+        }
+    };
+
     private Action getTorchToggleAction() {
-        return new SinglePressAction(com.android.internal.R.drawable.ic_lock_torch,
+        return new SinglePressAction(com.android.internal.R.drawable.ic_lock_power_torch,
                 R.string.global_action_torch) {
 
             public void onPress() {
                 try {
-                    CameraManager cameraManager = (CameraManager)
-                            mContext.getSystemService(Context.CAMERA_SERVICE);
-                    for (final String cameraId : cameraManager.getCameraIdList()) {
+                    for (final String cameraId : mCameraManager.getCameraIdList()) {
                         CameraCharacteristics characteristics =
-                            cameraManager.getCameraCharacteristics(cameraId);
+                            mCameraManager.getCameraCharacteristics(cameraId);
                         int orient = characteristics.get(CameraCharacteristics.LENS_FACING);
                         if (orient == CameraCharacteristics.LENS_FACING_BACK) {
-                            cameraManager.setTorchMode(cameraId, !mTorchEnabled);
+                            mCameraManager.setTorchMode(cameraId, !mTorchEnabled);
                             mTorchEnabled = !mTorchEnabled;
                         }
                     }
@@ -615,12 +628,12 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
 
             @Override
             public boolean showDuringKeyguard() {
-                return true;
+                return false;
             }
 
             @Override
             public boolean showBeforeProvisioning() {
-                return true;
+                return false;
             }
         };
     }
@@ -646,45 +659,53 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
     }
 
     private Action getAssistAction() {
-        return new SinglePressAction(com.android.internal.R.drawable.ic_action_assist_focused,
+        return new SinglePressAction(com.android.internal.R.drawable.ic_lock_power_assist,
                 R.string.global_action_assist) {
             @Override
             public void onPress() {
-                Intent intent = new Intent(Intent.ACTION_ASSIST);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                mContext.startActivity(intent);
+                try {
+                    Intent intent = new Intent(Intent.ACTION_ASSIST);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    mContext.startActivity(intent);
+                } catch (Exception e) {
+                    Log.e(TAG, "Error while trying to start activity.", e);
+                }
             }
 
             @Override
             public boolean showDuringKeyguard() {
-                return true;
+                return false;
             }
 
             @Override
             public boolean showBeforeProvisioning() {
-                return true;
+                return false;
             }
         };
     }
 
     private Action getVoiceAssistAction() {
-        return new SinglePressAction(com.android.internal.R.drawable.ic_voice_search,
+        return new SinglePressAction(com.android.internal.R.drawable.ic_lock_power_voice,
                 R.string.global_action_voice_assist) {
             @Override
             public void onPress() {
-                Intent intent = new Intent(Intent.ACTION_VOICE_ASSIST);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                mContext.startActivity(intent);
+                try {
+                    Intent intent = new Intent(Intent.ACTION_VOICE_ASSIST);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    mContext.startActivity(intent);
+                } catch (Exception e) {
+                    Log.e(TAG, "Error while trying to start activity.", e);
+                }
             }
 
             @Override
             public boolean showDuringKeyguard() {
-                return true;
+                return false;
             }
 
             @Override
             public boolean showBeforeProvisioning() {
-                return true;
+                return false;
             }
         };
     }
@@ -705,7 +726,7 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
 
             @Override
             public boolean showDuringKeyguard() {
-                return true;
+                return false;
             }
 
             @Override
@@ -740,7 +761,7 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
                     Drawable icon = user.iconPath != null ? Drawable.createFromPath(user.iconPath)
                             : null;
                     SinglePressAction switchToUser = new SinglePressAction(
-                            com.android.internal.R.drawable.ic_menu_cc, icon,
+                            com.android.internal.R.drawable.ic_lock_power_user, icon,
                             (user.name != null ? user.name : "Primary")
                             + (isCurrentUser ? " \u2714" : "")) {
                         public void onPress() {
