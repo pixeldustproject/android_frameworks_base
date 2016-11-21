@@ -56,4 +56,7 @@
     <string name="stream_title_alarm">Alarm</string>
     <string name="stream_title_notification">Notification</string>
     <string name="stream_title_bluetooth">Bluetooth</string>
+
+    <!-- all tile scroller for quickbar settings -->
+    <string name="qs_menu_item_scroll">Quickbar scroll</string>
 </resources>
