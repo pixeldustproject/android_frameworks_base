@@ -41,4 +41,8 @@
     <string name="global_action_current_user">Current</string>
 
     <string name="default_string">Default</string>
+
+    <!-- Single handed mode -->
+    <string name="singlehandmode_click_hint_message">Touch outside the screen to exit mini screen view</string>
+    <string name="singlehandmode_slide_hint_message">Slide your finger across the navigation bar to switch between the standard and mini screen views</string>
 </resources>
