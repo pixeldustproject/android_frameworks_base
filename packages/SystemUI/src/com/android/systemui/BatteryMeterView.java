@@ -104,7 +104,6 @@ public class BatteryMeterView extends ImageView implements
 
     @Override
     public void onPowerSaveChanged(boolean isPowerSave) {
-
     }
 
     public void setBatteryController(BatteryController mBatteryController) {

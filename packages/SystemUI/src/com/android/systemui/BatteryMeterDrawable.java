@@ -62,12 +62,13 @@ public class BatteryMeterDrawable extends Drawable implements
             Settings.Secure.TEXT_CHARGING_SYMBOL;
 
     // Values for the different battery styles
-    public static final int BATTERY_STYLE_PORTRAIT  = 0;
-    public static final int BATTERY_STYLE_CIRCLE    = 2;
-    public static final int BATTERY_STYLE_HIDDEN    = 4;
-    public static final int BATTERY_STYLE_LANDSCAPE = 5;
-    public static final int BATTERY_STYLE_TEXT      = 6;
+    public static final int BATTERY_STYLE_PORTRAIT     = 0;
+    public static final int BATTERY_STYLE_CIRCLE       = 2;
+    public static final int BATTERY_STYLE_HIDDEN       = 4;
+    public static final int BATTERY_STYLE_LANDSCAPE    = 5;
+    public static final int BATTERY_STYLE_TEXT         = 6;
     public static final int BATTERY_STYLE_BIGCIRCLE    = 7;
+    public static final int BATTERY_STYLE_SOLID        = 8;
 
     private final int[] mColors;
     private final int mIntrinsicWidth;
@@ -408,7 +409,9 @@ public class BatteryMeterDrawable extends Drawable implements
         if (mBoltDrawable != null) {
             //if we are in the tile we must avoid darkintensity. We are good about this because
             //it will be overridden thanks to the following updateBoltDrawableLayer call
-            mBoltDrawable.setTint(0xff000000 | mIconTint);
+            if (mBoltDrawable != null) {
+                mBoltDrawable.setTint(0xff000000 | mIconTint);
+            }
         }
         mFrameDrawable.setTint(mIsBatteryTile ? mLightModeBatteryMeterFrameColorTile : mCurrentBackgroundColor);
         updateBoltDrawableLayer(mBatteryDrawable, mBoltDrawable);
@@ -553,6 +556,8 @@ public class BatteryMeterDrawable extends Drawable implements
                 return R.drawable.ic_battery_bigcircle;
             case BATTERY_STYLE_PORTRAIT:
                 return R.drawable.ic_battery_portrait;
+            case BATTERY_STYLE_SOLID:
+                return R.drawable.ic_battery_solid;
             default:
                 return 0;
         }
@@ -567,6 +572,8 @@ public class BatteryMeterDrawable extends Drawable implements
                 return R.style.BatteryMeterViewDrawable_Circle;
             case BATTERY_STYLE_PORTRAIT:
                 return R.style.BatteryMeterViewDrawable_Portrait;
+            case BATTERY_STYLE_SOLID:
+                return R.style.BatteryMeterViewDrawable_Solid;
             default:
                 return R.style.BatteryMeterViewDrawable;
         }
@@ -622,6 +629,9 @@ public class BatteryMeterDrawable extends Drawable implements
                 break;
             case BATTERY_STYLE_BIGCIRCLE:
                 textSize = widthDiv2 * 1.3f;
+                break;
+            case BATTERY_STYLE_SOLID:
+                textSize = widthDiv2 * 1.0f;
                 break;
             default:
                 textSize = widthDiv2 * 0.9f;
@@ -775,24 +785,26 @@ public class BatteryMeterDrawable extends Drawable implements
 
     private void handleBoltVisibility() {
         final Drawable d = mBatteryDrawable.findDrawableByLayerId(R.id.battery_charge_indicator);
-        if (d instanceof BitmapDrawable) {
-            // In case we are using a BitmapDrawable, which we should be unless something bad
+        if (d != null) {
+            if (d instanceof BitmapDrawable) {
+                // In case we are using a BitmapDrawable, which we should be unless something bad
                 // happened, we need to change the paint rather than the alpha in case the blendMode
-            // has been set to clear.  Clear always clears regardless of alpha level ;)
-            final BitmapDrawable bd = (BitmapDrawable) d;
-            bd.getPaint().set(!mPluggedIn || (mPluggedIn && mShowPercent == 1 && (!mForceChargeBatteryText
+                // has been set to clear.  Clear always clears regardless of alpha level ;)
+                final BitmapDrawable bd = (BitmapDrawable) d;
+                bd.getPaint().set(!mPluggedIn || (mPluggedIn && mShowPercent == 1 && (!mForceChargeBatteryText
                                                                     || (mForceChargeBatteryText && mTextChargingSymbol != 0 && !mIsBatteryTile)))
-                                            || (mPluggedIn && mShowPercent == 2 && mTextChargingSymbol != 0)
-                                            || (mPluggedIn && mShowPercent == 0  && (mForceChargeBatteryText && mTextChargingSymbol != 0))
-                                            ? mClearPaint : mTextAndBoltPaint);
-            if (mIsBatteryTile) {
-                mBoltDrawable.setTint(getBoltColor());
+                                                || (mPluggedIn && mShowPercent == 2 && mTextChargingSymbol != 0)
+                                                || (mPluggedIn && mShowPercent == 0  && (mForceChargeBatteryText && mTextChargingSymbol != 0))
+                                                ? mClearPaint : mTextAndBoltPaint);
+                if (mIsBatteryTile) {
+                    mBoltDrawable.setTint(getBoltColor());
+                }
+            } else {
+                d.setAlpha(!mPluggedIn || (mPluggedIn && mShowPercent == 1 && (!mForceChargeBatteryText
+                                                                || (mForceChargeBatteryText && mTextChargingSymbol != 0 && !mIsBatteryTile)))
+                                        || (mPluggedIn && mShowPercent == 2 && mTextChargingSymbol != 0)
+                                        || (mPluggedIn && mShowPercent == 0  && (mForceChargeBatteryText && mTextChargingSymbol != 0)) ? 0 : 255);
             }
-        } else {
-            d.setAlpha(!mPluggedIn || (mPluggedIn && mShowPercent == 1 && (!mForceChargeBatteryText
-                                                            || (mForceChargeBatteryText && mTextChargingSymbol != 0 && !mIsBatteryTile)))
-                                    || (mPluggedIn && mShowPercent == 2 && mTextChargingSymbol != 0)
-                                    || (mPluggedIn && mShowPercent == 0  && (mForceChargeBatteryText && mTextChargingSymbol != 0)) ? 0 : 255);
         }
     }
 
@@ -828,14 +840,22 @@ public class BatteryMeterDrawable extends Drawable implements
 
     private Paint.Align getPaintAlignmentFromGravity(int gravity) {
         final boolean isRtl = getLayoutDirection() == View.LAYOUT_DIRECTION_RTL;
-        if ((gravity & Gravity.START) == Gravity.START) {
-            return isRtl ? Paint.Align.RIGHT : Paint.Align.LEFT;
+        switch ((gravity & Gravity.START)) {
+            case Gravity.START:
+                return isRtl ? Paint.Align.RIGHT : Paint.Align.LEFT;
         }
-        if ((gravity & Gravity.END) == Gravity.END) {
-            return isRtl ? Paint.Align.LEFT : Paint.Align.RIGHT;
+        switch ((gravity & Gravity.END)) {
+            case Gravity.END:
+                return isRtl ? Paint.Align.LEFT : Paint.Align.RIGHT;
         }
-        if ((gravity & Gravity.LEFT) == Gravity.LEFT) return Paint.Align.LEFT;
-        if ((gravity & Gravity.RIGHT) == Gravity.RIGHT) return Paint.Align.RIGHT;
+        switch ((gravity & Gravity.LEFT)) {
+            case Gravity.LEFT:
+                return Paint.Align.LEFT;
+        }
+        switch ((gravity & Gravity.RIGHT)) {
+            case Gravity.RIGHT:
+                return Paint.Align.RIGHT;
+        }
 
         // Default to center
         return Paint.Align.CENTER;
