@@ -148,4 +148,7 @@
 
   <!-- Automatic brightness enhancements -->
   <java-symbol type="integer" name="config_autoBrightnessBrighteningLightFastDebounce"/>
+
+  <!-- Doze mode -->
+  <java-symbol type="bool" name="config_doze_enabled_by_default" />
 </resources>
