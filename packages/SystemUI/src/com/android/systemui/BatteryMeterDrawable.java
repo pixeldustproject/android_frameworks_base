@@ -595,13 +595,13 @@ public class BatteryMeterDrawable extends Drawable implements
         final float textSize;
         switch(mStyle) {
             case 2:
-                textSize = widthDivCircle* 1.2f;
+                textSize = widthDiv2 * 1.0f;
                 break;
             case 5:
                 textSize = widthDiv2 * 1.0f;
                 break;
             case BATTERY_STYLE_BIGCIRCLE:
-                textSize = widthDiv2 * 1.2f;
+                textSize = widthDiv2 * 1.3f;
                 break;
             default:
                 textSize = widthDiv2 * 0.9f;
