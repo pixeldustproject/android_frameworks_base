@@ -3658,6 +3658,13 @@ public final class Settings {
          * @hide
          */
         public static final String BATTERY_LIGHT_PULSE = "battery_light_pulse";
+
+        /**
+         * Whether to show the battery info on the lockscreen while charging
+         * @hide
+         */
+        public static final String LOCKSCREEN_BATTERY_INFO = "lockscreen_battery_info";
+ 
         /**
          * Enable navigation bar double tap gesture on to put device to sleep
          * @hide
