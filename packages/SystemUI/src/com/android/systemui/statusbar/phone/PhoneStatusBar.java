@@ -423,6 +423,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     int mLinger;
     int mInitialTouchX;
     int mInitialTouchY;
+    private boolean mHideLockscreenArtwork;
 
     // for disabling the status bar
     int mDisabled1 = 0;
@@ -489,6 +490,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.QS_TILE_TITLE_VISIBILITY),
                     false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.LOCKSCREEN_HIDE_MEDIA),
+                    false, this, UserHandle.USER_ALL);
             update();
         }
 
@@ -507,6 +511,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             mBrightnessControl = Settings.System.getIntForUser(
                     resolver, Settings.System.STATUS_BAR_BRIGHTNESS_CONTROL, 0,
                     UserHandle.USER_CURRENT) == 1;
+            mHideLockscreenArtwork = Settings.System.getIntForUser(
+                    resolver, Settings.System.LOCKSCREEN_HIDE_MEDIA, 0, mCurrentUserId) == 1;
             if (mNotificationPanel != null) {
                 mNotificationPanel.updateSettings();
             }
@@ -2344,7 +2350,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
      */
     public void updateMediaMetaData(boolean metaDataChanged, boolean allowEnterAnimation) {
         Trace.beginSection("PhoneStatusBar#updateMediaMetaData");
-        if (!SHOW_LOCKSCREEN_MEDIA_ARTWORK) {
+        if (!SHOW_LOCKSCREEN_MEDIA_ARTWORK || mHideLockscreenArtwork) {
             Trace.endSection();
             return;
         }
