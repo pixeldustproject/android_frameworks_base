@@ -171,7 +171,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 
-import org.slim.provider.SlimSettings;
+import slim.provider.SlimSettings;
 
 /**
  * WindowManagerPolicy implementation for the Android phone UI.  This
