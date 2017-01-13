@@ -42,9 +42,9 @@
   <string name="app_killed_message"><xliff:g id="string">%s </xliff:g> уничтожение</string>
   <string name="no_app_killed_message">Нечего закрывать</string>
   <!-- ADB over network notification -->
-  <string name="adb_net_active_notification_title">Включён режим отладки по сети</string>
+  <string name="adb_net_active_notification_title">Отладка по сети разрешена</string>
   <!-- ADB over USB and network notification -->
-  <string name="adb_both_active_notification_title">Режим отладки по USB и сети включен</string>
+  <string name="adb_both_active_notification_title">Отладка по сети и USB разрешена</string>
   <!-- ADB notification message-->
   <string name="adb_active_generic_notification_message">Нажмите, чтобы отключить отладку.</string>
   <!-- Title of an application permission, listed so the user can choose whether they want to allow the application to do this. -->
