@@ -1082,6 +1082,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     mStatusBarHeaderMachine.addObserver((QuickStatusBarHeader) mHeader);
                     mStatusBarHeaderMachine.updateEnablement();
 
+                    // and make sure all other settings are also applied again
+                    mHeader.updateSettings();
+                    qsContainer.updateSettings();
+
                     initSignalCluster(mHeader);
                     mHeader.setActivityStarter(PhoneStatusBar.this);
                 }
