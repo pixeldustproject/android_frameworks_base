@@ -156,6 +156,7 @@ import com.android.server.policy.keyguard.KeyguardServiceDelegate;
 import com.android.server.policy.keyguard.KeyguardServiceDelegate.DrawnListener;
 import com.android.server.statusbar.StatusBarManagerInternal;
 import com.android.server.vr.VrManagerInternal;
+import android.text.TextUtils;
 
 import java.io.File;
 import java.io.FileReader;
@@ -261,6 +262,8 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     private static final int KEY_ACTION_SLEEP = 7;
     private static final int KEY_ACTION_LAST_APP = 8;
     private static final int KEY_ACTION_SPLIT_SCREEN = 9;
+    private static final int KEY_ACTION_ONE_HANDED_MODE_LEFT = 10;
+    private static final int KEY_ACTION_ONE_HANDED_MODE_RIGHT = 11;
 
     // Masks for checking presence of hardware keys.
     // Must match values in core/res/res/values/config.xml
@@ -1765,6 +1768,12 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 break;
             case KEY_ACTION_SPLIT_SCREEN:
                 toggleSplitScreen();
+                break;
+            case KEY_ACTION_ONE_HANDED_MODE_LEFT:
+                toggleOneHandedMode(mContext, "left");
+                break;
+            case KEY_ACTION_ONE_HANDED_MODE_RIGHT:
+                toggleOneHandedMode(mContext, "right");
                 break;
             default:
                 break;
@@ -4201,6 +4210,15 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         if (statusbar != null) {
             statusbar.toggleSplitScreen();
         }
+    }
+
+    private static void toggleOneHandedMode(Context context, String direction) {
+        String str = Settings.Global.getString(context.getContentResolver(), Settings.Global.SINGLE_HAND_MODE);
+
+        if (TextUtils.isEmpty(str))
+            Settings.Global.putString(context.getContentResolver(), Settings.Global.SINGLE_HAND_MODE, direction);
+        else
+            Settings.Global.putString(context.getContentResolver(), Settings.Global.SINGLE_HAND_MODE, "");
     }
 
     @Override
