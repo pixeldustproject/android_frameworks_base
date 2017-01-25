@@ -4078,6 +4078,7 @@ public final class Settings {
         public static final String STATUS_BAR_CUSTOM_HEADER_IMAGE = "status_bar_custom_header_image";
 
         /**
+         * Number of qs columns on portrait orientation
          * @hide
          */
         public static final String QS_LAYOUT_COLUMNS = "qs_layout_columns";
@@ -4086,6 +4087,12 @@ public final class Settings {
          * @hide
          */
         public static final String QS_QUICKBAR_SCROLL_ENABLED = "qs_quickbar_scroll_enabled";
+
+        /**
+         * Number of qs columns on landscape orientation
+         * @hide
+         */
+        public static final String QS_LAYOUT_COLUMNS_LANDSCAPE = "qs_layout_columns_landscape";
 
         /**
          * Whether to display qs tile titles in the qs panel
