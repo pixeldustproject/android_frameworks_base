@@ -77,6 +77,8 @@ public class QSCustomizer extends LinearLayout implements OnMenuItemClickListene
     private int mDefaultColumns;
     private Menu mColumnsSubMenu;
     private Menu mColumnsLandscapeSubMenu;
+    private Menu mRowsSubMenu;
+    private Menu mRowsLandscapeSubMenu;
 
     public QSCustomizer(Context context, AttributeSet attrs) {
         super(new ContextThemeWrapper(context, R.style.edit_theme), attrs);
@@ -98,9 +100,9 @@ public class QSCustomizer extends LinearLayout implements OnMenuItemClickListene
         mToolbar.setOnMenuItemClickListener(this);
         MenuInflater menuInflater = new MenuInflater(mContext);
         menuInflater.inflate(R.menu.qs_customize_menu, mToolbar.getMenu());
-        MenuItem menuItem = mToolbar.getMenu().findItem(R.id.menu_item_columns);
-        if (menuItem != null) {
-            mColumnsSubMenu = menuItem.getSubMenu();
+        MenuItem menuColumnsItem = mToolbar.getMenu().findItem(R.id.menu_item_columns);
+        if (menuColumnsItem != null) {
+            mColumnsSubMenu = menuColumnsItem.getSubMenu();
         }
         int qsScrollValue = Settings.System.getIntForUser(mContext.getContentResolver(),
                 Settings.System.QS_QUICKBAR_SCROLL_ENABLED, QuickQSPanel.NUM_QUICK_TILES_DEFAULT,
@@ -108,9 +110,18 @@ public class QSCustomizer extends LinearLayout implements OnMenuItemClickListene
         MenuItem qsScrollMenuItem = mToolbar.getMenu().findItem(R.id.menu_item_qs_scroll);
         qsScrollMenuItem.setChecked(qsScrollValue != QuickQSPanel.NUM_QUICK_TILES_DEFAULT);
 
-        MenuItem menuItemLand = mToolbar.getMenu().findItem(R.id.menu_item_columns_landscape);
-        if (menuItemLand != null) {
-            mColumnsLandscapeSubMenu = menuItemLand.getSubMenu();
+        MenuItem menuColumnsItemLand = mToolbar.getMenu().findItem(R.id.menu_item_columns_landscape);
+        if (menuColumnsItemLand != null) {
+            mColumnsLandscapeSubMenu = menuColumnsItemLand.getSubMenu();
+        }
+
+        MenuItem menuRowsItem = mToolbar.getMenu().findItem(R.id.menu_item_rows);
+        if (menuRowsItem != null) {
+            mRowsSubMenu = menuRowsItem.getSubMenu();
+        }
+        MenuItem menuRowsItemLand = mToolbar.getMenu().findItem(R.id.menu_item_rows_landscape);
+        if (menuRowsItemLand != null) {
+            mRowsLandscapeSubMenu = menuRowsItemLand.getSubMenu();
         }
 
         int qsTitlesValue = Settings.System.getIntForUser(mContext.getContentResolver(),
@@ -189,6 +200,12 @@ public class QSCustomizer extends LinearLayout implements OnMenuItemClickListene
             if (mColumnsLandscapeSubMenu != null) {
                 mColumnsLandscapeSubMenu.close();
             }
+            if (mRowsSubMenu != null) {
+                mRowsSubMenu.close();
+            }
+            if (mRowsLandscapeSubMenu != null) {
+                mRowsLandscapeSubMenu.close();
+            }
             mToolbar.dismissPopupMenus();
             setCustomizing(false);
             save();
@@ -217,10 +234,12 @@ public class QSCustomizer extends LinearLayout implements OnMenuItemClickListene
     @Override
     public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()) {
+            //reset config
             case R.id.menu_item_reset:
                 MetricsLogger.action(getContext(), MetricsProto.MetricsEvent.ACTION_QS_EDIT_RESET);
                 reset();
                 break;
+            //columns portrait
             case R.id.menu_item_columns_three:
                 Settings.System.putIntForUser(mContext.getContentResolver(),
                         Settings.System.QS_LAYOUT_COLUMNS, 3, UserHandle.USER_CURRENT);
@@ -248,6 +267,7 @@ public class QSCustomizer extends LinearLayout implements OnMenuItemClickListene
                         QuickQSPanel.NUM_QUICK_TILES_ALL :
                         QuickQSPanel.NUM_QUICK_TILES_DEFAULT, UserHandle.USER_CURRENT);
                 break;
+            //columns landscape
             case R.id.menu_item_columns_landscape_three:
                 Settings.System.putIntForUser(mContext.getContentResolver(),
                         Settings.System.QS_LAYOUT_COLUMNS_LANDSCAPE, 3, UserHandle.USER_CURRENT);
@@ -276,6 +296,33 @@ public class QSCustomizer extends LinearLayout implements OnMenuItemClickListene
                 Settings.System.putIntForUser(mContext.getContentResolver(),
                         Settings.System.QS_LAYOUT_COLUMNS_LANDSCAPE, 9, UserHandle.USER_CURRENT);
                 break;
+            //rows portrait
+            case R.id.menu_item_rows_three:
+                Settings.System.putIntForUser(mContext.getContentResolver(),
+                        Settings.System.QS_LAYOUT_ROWS, 3, UserHandle.USER_CURRENT);
+                break;
+            case R.id.menu_item_rows_four:
+                Settings.System.putIntForUser(mContext.getContentResolver(),
+                        Settings.System.QS_LAYOUT_ROWS, 4, UserHandle.USER_CURRENT);
+                break;
+            case R.id.menu_item_rows_five:
+                Settings.System.putIntForUser(mContext.getContentResolver(),
+                        Settings.System.QS_LAYOUT_ROWS, 5, UserHandle.USER_CURRENT);
+                break;
+            //rows landscape
+            case R.id.menu_item_rows_landscape_one:
+                Settings.System.putIntForUser(mContext.getContentResolver(),
+                        Settings.System.QS_LAYOUT_ROWS_LANDSCAPE, 1, UserHandle.USER_CURRENT);
+                break;
+            case R.id.menu_item_rows_landscape_two:
+                Settings.System.putIntForUser(mContext.getContentResolver(),
+                        Settings.System.QS_LAYOUT_ROWS_LANDSCAPE, 2, UserHandle.USER_CURRENT);
+                break;
+            case R.id.menu_item_rows_landscape_three:
+                Settings.System.putIntForUser(mContext.getContentResolver(),
+                        Settings.System.QS_LAYOUT_ROWS_LANDSCAPE, 3, UserHandle.USER_CURRENT);
+                break;
+            //tiles title
             case R.id.menu_item_titles:
                 item.setChecked(!item.isChecked());
                 Settings.System.putIntForUser(mContext.getContentResolver(),
@@ -293,11 +340,18 @@ public class QSCustomizer extends LinearLayout implements OnMenuItemClickListene
             tiles.add(tile);
         }
         mTileAdapter.setTileSpecs(tiles);
+        final Resources res = mContext.getResources();
         Settings.System.putIntForUser(mContext.getContentResolver(),
                 Settings.System.QS_LAYOUT_COLUMNS, mDefaultColumns,
                 UserHandle.USER_CURRENT);
         Settings.System.putIntForUser(mContext.getContentResolver(),
                 Settings.System.QS_LAYOUT_COLUMNS_LANDSCAPE, mDefaultColumns,
+                UserHandle.USER_CURRENT);
+        Settings.System.putIntForUser(mContext.getContentResolver(),
+                Settings.System.QS_LAYOUT_ROWS, 3, UserHandle.USER_CURRENT);
+        Settings.System.putIntForUser(mContext.getContentResolver(),
+                Settings.System.QS_LAYOUT_ROWS_LANDSCAPE,
+                Math.max(1, res.getInteger(R.integer.quick_settings_num_rows)),
                 UserHandle.USER_CURRENT);
     }
 
@@ -369,6 +423,7 @@ public class QSCustomizer extends LinearLayout implements OnMenuItemClickListene
                 UserHandle.USER_CURRENT);
         mTileAdapter.setColumnCount(isPortrait ? columns : columnsLandscape);
         mLayout.setSpanCount(isPortrait ? columns : columnsLandscape);
+        //TODO: apply custom rows to the editor view
     }
 
     private void updateColumnsMenu() {
