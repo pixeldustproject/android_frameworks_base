@@ -46,4 +46,7 @@
     <style name="TextAppearance.SwitchBar" parent="@android:style/TextAppearance.Material.Title">
         <item name="android:textColor">?android:attr/textColorPrimaryInverse</item>
     </style>
+
+  <!-- Notification icon/text dynamic tint -->
+  <java-symbol type="bool" name="config_useDarkBgNotificationIconTextTinting" />
 </resources>
