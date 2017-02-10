@@ -190,4 +190,7 @@
 
   <!-- FP unlock Boost -->
   <java-symbol type="integer" name="fpunlockboost_duration" />
+
+  <!-- High Brightness Mode -->
+  <java-symbol type="bool" name="config_supportHighBrightness" />
 </resources>

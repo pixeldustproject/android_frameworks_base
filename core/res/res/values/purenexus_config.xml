@@ -110,4 +110,8 @@
 
     <!-- Defines the length of FP unlock boost -->
     <integer name="fpunlockboost_duration">1200</integer>
+
+    <!-- High Brightness Mode -->
+    <add-resource type="bool" name="config_supportHighBrightness"></add-resource>
+    <bool name="config_supportHighBrightness">false</bool>
 </resources>
