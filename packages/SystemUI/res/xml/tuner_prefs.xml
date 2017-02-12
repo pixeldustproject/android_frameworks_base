@@ -30,6 +30,10 @@
         android:key="data_saver"
         android:title="@string/status_bar_datasaver" />
 
+     <com.android.systemui.tuner.StatusBarSwitch
+        android:key="volte"
+        android:title="@string/status_bar_volte" />
+
     <com.android.systemui.tuner.StatusBarSwitch
         android:key="managed_profile"
         android:title="@string/status_bar_work" />
