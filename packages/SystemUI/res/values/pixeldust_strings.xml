@@ -176,4 +176,9 @@
  
     <!-- volte icon switch -->
     <string name="status_bar_volte">VOLTE</string>
+
+    <!-- Adb over network tile -->
+    <string name="quick_settings_network_adb_enabled_label">Enabled</string>
+    <string name="quick_settings_network_adb_disabled_label">Disabled</string>
+    <string name="quick_settings_network_adb_label">ADB over network</string>
 </resources>
