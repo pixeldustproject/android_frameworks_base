@@ -117,11 +117,18 @@ public class RecentController implements RecentPanelView.OnExitListener,
     private int mMainGravity;
     private int mUserGravity;
     private int mPanelColor;
+    private int mVisibility;
 
     private float mScaleFactor = DEFAULT_SCALE_FACTOR;
 
     // Main panel view.
     private RecentPanelView mRecentPanelView;
+
+    // App Sidebar.
+    private AppSidebar mAppSidebar;
+    private boolean mAppSidebarEnabled;
+    private float mAppSidebarScaleFactor = AppSidebar.DEFAULT_SCALE_FACTOR;
+    private boolean mAppSidebarOpenSimultaneously;
 
     private Handler mHandler = new Handler();
 
@@ -266,11 +273,7 @@ public class RecentController implements RecentPanelView.OnExitListener,
     private void setGravityAndImageResources() {
         // Calculate and set gravitiy.
         if (mLayoutDirection == View.LAYOUT_DIRECTION_RTL) {
-            if (mUserGravity == Gravity.LEFT) {
-                mMainGravity = Gravity.RIGHT;
-            } else {
-                mMainGravity = Gravity.LEFT;
-            }
+            mMainGravity = reverseGravity(mUserGravity);
         } else {
             mMainGravity = mUserGravity;
         }
@@ -397,9 +400,27 @@ public class RecentController implements RecentPanelView.OnExitListener,
      *
      * @return LayoutParams
      */
-    private WindowManager.LayoutParams generateLayoutParameter() {
-        final int width = (int) (mContext.getResources()
-                .getDimensionPixelSize(R.dimen.recent_width) * mScaleFactor);
+    private WindowManager.LayoutParams generateLayoutParameter(){
+        return generateLayoutParameter(false);
+    }
+
+    /**
+     * Get LayoutParams we need for the recents panel or the recents app sidebar.
+     *
+     * @return LayoutParams
+     */
+    private WindowManager.LayoutParams generateLayoutParameter(boolean forAppSidebar) {
+        int width;
+        if (forAppSidebar) {
+            int appSidebarPadding = mContext.getResources()
+                    .getDimensionPixelSize(R.dimen.recent_app_sidebar_item_padding);
+            width = (int) (mContext.getResources()
+                    .getDimensionPixelSize(R.dimen.recent_app_sidebar_item_size)
+                    * mAppSidebarScaleFactor + appSidebarPadding * 2f);
+        } else {
+            width = (int) (mContext.getResources().getDimensionPixelSize(R.dimen.recent_width)
+                    * mScaleFactor);
+        }
         final WindowManager.LayoutParams params = new WindowManager.LayoutParams(
                 width,
                 WindowManager.LayoutParams.MATCH_PARENT,
@@ -417,10 +438,15 @@ public class RecentController implements RecentPanelView.OnExitListener,
         }
 
         // Set gravitiy.
-        params.gravity = Gravity.CENTER_VERTICAL | mMainGravity;
+        if (forAppSidebar) {
+            params.gravity = reverseGravity(mMainGravity);
+        } else {
+            params.gravity = mMainGravity;
+        }
+        params.gravity |= Gravity.CENTER_VERTICAL;
 
         // Set animation for our recent window.
-        if (mMainGravity == Gravity.LEFT) {
+        if ((mMainGravity == Gravity.LEFT) != forAppSidebar) {
             params.windowAnimations =
                     com.android.internal.R.style.Animation_RecentScreen_Left;
         } else {
@@ -428,7 +454,7 @@ public class RecentController implements RecentPanelView.OnExitListener,
         }
 
         // This title is for debugging only. See: dumpsys window
-        params.setTitle("RecentControlPanel");
+        params.setTitle(forAppSidebar ? "RecentAppSidebar" : "RecentControlPanel");
         return params;
     }
 
@@ -466,6 +492,10 @@ public class RecentController implements RecentPanelView.OnExitListener,
             newVis |= View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
         }
         mParentView.setSystemUiVisibility(newVis);
+        mVisibility = newVis;
+        if (mAppSidebar != null){
+            mAppSidebar.setSystemUiVisibility(newVis);
+        }
     }
 
     // Returns if panel is currently showing.
@@ -485,6 +515,7 @@ public class RecentController implements RecentPanelView.OnExitListener,
                 mAnimationState = ANIMATION_STATE_NONE;
                 mHandler.removeCallbacks(mRecentRunnable);
                 mWindowManager.removeViewImmediate(mParentView);
+                removeSidebarViewImmediate();
                 return true;
             } else if (mAnimationState != ANIMATION_STATE_OUT) {
                 if (DEBUG) Log.d(TAG, "out animation starting");
@@ -493,6 +524,7 @@ public class RecentController implements RecentPanelView.OnExitListener,
                 mHandler.postDelayed(mRecentRunnable, mContext.getResources().getInteger(
                         com.android.internal.R.integer.config_recentDefaultDur));
                 mWindowManager.removeView(mParentView);
+                removeSidebarView();
                 return true;
             }
         }
@@ -514,6 +546,7 @@ public class RecentController implements RecentPanelView.OnExitListener,
         mHandler.removeCallbacks(mRecentRunnable);
         mWindowManager.addView(mParentView, generateLayoutParameter());
         mRecentPanelView.scrollToFirst();
+        addSidebarView();
     }
 
     public static void sendCloseSystemWindows(String reason) {
@@ -593,6 +626,18 @@ public class RecentController implements RecentPanelView.OnExitListener,
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.SLIM_RECENTS_ICON_PACK),
                     false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.USE_RECENT_APP_SIDEBAR),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.RECENT_APP_SIDEBAR_CONTENT),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.RECENT_APP_SIDEBAR_SCALE_FACTOR),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.RECENT_APP_SIDEBAR_OPEN_SIMULTANEOUSLY),
+                    false, this, UserHandle.USER_ALL);
             update();
         }
 
@@ -657,6 +702,22 @@ public class RecentController implements RecentPanelView.OnExitListener,
             String currentIconPack = Settings.System.getString(resolver,
                 Settings.System.SLIM_RECENTS_ICON_PACK);
             IconPackHelper.getInstance(mContext).updatePrefs(currentIconPack);
+
+            // App sidebar settings
+            if (Settings.System.getIntForUser(resolver, Settings.System.USE_RECENT_APP_SIDEBAR, 1,
+                    UserHandle.USER_CURRENT) == 1) {
+                String appSidebarContent = Settings.System.getStringForUser(resolver,
+                        Settings.System.RECENT_APP_SIDEBAR_CONTENT, UserHandle.USER_CURRENT);
+                mAppSidebarEnabled = appSidebarContent != null && !appSidebarContent.equals("");
+            } else {
+                mAppSidebarEnabled = false;
+            }
+            mAppSidebarScaleFactor = Settings.System.getIntForUser(
+                    resolver, Settings.System.RECENT_APP_SIDEBAR_SCALE_FACTOR, 100,
+                    UserHandle.USER_CURRENT) / 100.0f;
+            mAppSidebarOpenSimultaneously = Settings.System.getIntForUser(resolver,
+                    Settings.System.RECENT_APP_SIDEBAR_OPEN_SIMULTANEOUSLY, 1,
+                    UserHandle.USER_CURRENT) == 1;
         }
     }
 
@@ -816,7 +877,46 @@ public class RecentController implements RecentPanelView.OnExitListener,
                 animation.start();
             }
         }
-   }
+    }
+
+    private int reverseGravity(int gravity){
+        return gravity == Gravity.LEFT ? Gravity.RIGHT : Gravity.LEFT;
+    }
+
+    // Methods for app sidebar:
+    private void addSidebarView() {
+        addSidebarHandler.removeCallbacks(addSidebarRunnable);
+        if (mAppSidebarEnabled) {
+            if (mAppSidebarOpenSimultaneously) {
+                addSidebarRunnable.run();
+            } else {
+                addSidebarHandler.post(addSidebarRunnable);
+            }
+        }
+    }
+
+    private Handler addSidebarHandler = new Handler();
+
+    private Runnable addSidebarRunnable =
+            new Runnable() {
+                @Override
+                public void run() {
+                    mAppSidebar = (AppSidebar) View.inflate(mContext, R.layout.recent_app_sidebar,
+                            null);
+                    mAppSidebar.setSlimRecent(RecentController.this);
+                    mAppSidebar.setSystemUiVisibility(mVisibility);
+                    mWindowManager.addView(mAppSidebar, generateLayoutParameter(true));
+                }
+            };
+
+    private void removeSidebarView() {
+        addSidebarHandler.removeCallbacks(addSidebarRunnable);
+        if (mAppSidebar != null) {
+            mAppSidebar.launchPendingSwipeAction();
+            mWindowManager.removeView(mAppSidebar);
+            mAppSidebar = null;
+        }
+    }
 
     public void startMultiWindow() {
         SystemServicesProxy ssp = SystemServicesProxy.getInstance(mContext);
@@ -953,4 +1053,17 @@ public class RecentController implements RecentPanelView.OnExitListener,
         }
     }
 
+    private void removeSidebarViewImmediate() {
+        addSidebarHandler.removeCallbacks(addSidebarRunnable);
+        if (mAppSidebar != null) {
+            mWindowManager.removeViewImmediate(mAppSidebar);
+            mAppSidebar = null;
+        }
+    }
+
+    public void onLaunchApplication() {
+        if (mAppSidebar != null) {
+            mAppSidebar.cancelPendingSwipeAction();
+        }
+    }
 }
