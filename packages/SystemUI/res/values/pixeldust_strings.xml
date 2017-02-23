@@ -126,6 +126,10 @@
     <string name="recents_multiwin_warning">A multiwindow session is already active.\nJust tap an app if you want to dock it now.</string>
     <string name="recents_multiwin_nolastapp">You removed all recents, please choose an app from launcher or drawer.</string>
 
+    <!-- Slim recents app sidebar queue app toast -->
+    <string name="toast_recents_queue_app">Launch %s after closing recents</string>
+    <string name="toast_recents_cancel_queued_app">Cancelled app launch</string>
+
     <!-- Compass QS Tile -->
     <string name="quick_settings_compass_label">Compass</string>
     <string name="quick_settings_compass_value"><xliff:g id="degrees">%1$.0f</xliff:g>\u00b0 <xliff:g id="direction">%2$s</xliff:g></string>
