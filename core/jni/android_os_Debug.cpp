@@ -1030,17 +1030,13 @@ static void android_os_Debug_dumpNativeBacktraceToFile(JNIEnv* env, jobject claz
         env->ReleaseStringCritical(fileName, str);
     }
 
-    int fd = open(fileName8.string(), O_CREAT | O_WRONLY | O_NOFOLLOW, 0666);  /* -rw-rw-rw- */
+    int fd = open(fileName8.string(), O_CREAT | O_WRONLY | O_NOFOLLOW | O_CLOEXEC | O_APPEND, 0666);
     if (fd < 0) {
         fprintf(stderr, "Can't open %s: %s\n", fileName8.string(), strerror(errno));
         return;
     }
 
-    if (lseek(fd, 0, SEEK_END) < 0) {
-        fprintf(stderr, "lseek: %s\n", strerror(errno));
-    } else {
-        dump_backtrace_to_file(pid, fd);
-    }
+    dump_backtrace_to_file(pid, fd);
 
     close(fd);
 }
