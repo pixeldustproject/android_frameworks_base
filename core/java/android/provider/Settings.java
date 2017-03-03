@@ -4239,6 +4239,12 @@ public final class Settings {
          */
         public static final String SLIM_RECENTS_ICON_PACK = "slim_recents_icon_pack";
 
+	    /**
+         * show the membar in slim recents
+         *  @hide
+         */
+        public static final String SLIM_RECENTS_MEM_DISPLAY = "slim_recents_mem_display";
+
         /**
          * Whether to use slim recent app sidebar
          * @hide
