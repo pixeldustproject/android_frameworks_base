@@ -20,23 +20,12 @@ package com.android.systemui.qs.tiles;
 import android.content.Context;
 import android.content.ComponentName;
 import android.content.Intent;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.PaintFlagsDrawFilter;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.provider.Settings;
-import android.util.Log;
 import android.net.Uri;
+import android.widget.Toast;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.widget.Toast;
 
 import com.android.internal.logging.MetricsLogger;
 import com.android.internal.logging.MetricsProto.MetricsEvent;
@@ -50,12 +39,7 @@ import com.android.systemui.qs.QSDetailItemsList;
 import com.android.systemui.qs.QSTile;
 import com.android.systemui.qs.QSTile.DetailAdapter;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
 public class WeatherTile extends QSTile<QSTile.BooleanState> implements OmniJawsClient.OmniJawsObserver {
-    private static final String TAG = "WeatherTile";
-    private static final boolean DEBUG = false;
     private OmniJawsClient mWeatherClient;
     private boolean mShowingDetail;
     private Drawable mWeatherImage;
@@ -89,7 +73,6 @@ public class WeatherTile extends QSTile<QSTile.BooleanState> implements OmniJaws
 
     @Override
     public void setListening(boolean listening) {
-        if (DEBUG) Log.d(TAG, "setListening " + listening);
         mEnabled = mWeatherClient.isOmniJawsEnabled();
 
         if (listening) {
@@ -102,13 +85,12 @@ public class WeatherTile extends QSTile<QSTile.BooleanState> implements OmniJaws
 
     @Override
     public void weatherUpdated() {
-        if (DEBUG) Log.d(TAG, "weatherUpdated");
         queryAndUpdateWeather();
     }
 
     @Override
     protected void handleDestroy() {
-        // make sure we dont left one
+        // make sure we don't leave one
         mWeatherClient.removeObserver(this);
         mWeatherClient.cleanupObserver();
         super.handleDestroy();
@@ -153,7 +135,6 @@ public class WeatherTile extends QSTile<QSTile.BooleanState> implements OmniJaws
 
     @Override
     protected void handleUpdateState(BooleanState state, Object arg) {
-        if (DEBUG) Log.d(TAG, "handleUpdateState " + mEnabled);
         if (mEnabled) {
             state.label = mWeatherLabel;
             state.icon = new DrawableIcon(mWeatherImage);
@@ -172,7 +153,6 @@ public class WeatherTile extends QSTile<QSTile.BooleanState> implements OmniJaws
 
     private void queryAndUpdateWeather() {
         try {
-            if (DEBUG) Log.d(TAG, "queryAndUpdateWeather " + mEnabled);
             mWeatherImage = mWeatherClient.getDefaultWeatherConditionImage();
             if (mEnabled) {
                 mWeatherClient.queryWeather();
