@@ -67,4 +67,10 @@
 
     <!-- Single handed mode config -->
     <bool name="single_hand_mode">true</bool>
+
+    <!-- Slim recent app screen-->
+    <!-- The duration (in milliseconds) of recent app screen animation. -->
+    <integer name="config_recentDefaultDur">300</integer>
+    <!-- The duration (in milliseconds) of recent app screen exit animation. -->
+    <integer name="config_recentExitDur">450</integer>
 </resources>
