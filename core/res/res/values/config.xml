@@ -1104,6 +1104,7 @@
             9 - Toggle split screen
            10 - Task one-handed-mode left
            11 - Task one-handed-mode right
+           12 - Screen off
          This needs to match the constants in
          policy/src/com/android/internal/policy/impl/PhoneWindowManager.java
     -->
@@ -1122,6 +1123,7 @@
             9 - Toggle split screen
            10 - Task one-handed-mode left
            11 - Task one-handed-mode right
+           12 - Screen off
          This needs to match the constants in
          policy/src/com/android/internal/policy/impl/PhoneWindowManager.java
     -->
@@ -1140,6 +1142,7 @@
             9 - Toggle split screen
            10 - Task one-handed-mode left
            11 - Task one-handed-mode right
+           12 - Screen off
          This needs to match the constants in
          policy/src/com/android/internal/policy/impl/PhoneWindowManager.java
     -->

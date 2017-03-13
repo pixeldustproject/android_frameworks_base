@@ -270,6 +270,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     private static final int KEY_ACTION_SPLIT_SCREEN = 9;
     private static final int KEY_ACTION_ONE_HANDED_MODE_LEFT = 10;
     private static final int KEY_ACTION_ONE_HANDED_MODE_RIGHT = 11;
+    private static final int KEY_ACTION_SCREEN_OFF = 12;
 
     // Masks for checking presence of hardware keys.
     // Must match values in core/res/res/values/config.xml
@@ -1891,6 +1892,9 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 break;
             case KEY_ACTION_ONE_HANDED_MODE_RIGHT:
                 toggleOneHandedMode(mContext, "right");
+                break;
+            case KEY_ACTION_SCREEN_OFF:
+                mPowerManager.goToSleep(SystemClock.uptimeMillis());
                 break;
             default:
                 break;
