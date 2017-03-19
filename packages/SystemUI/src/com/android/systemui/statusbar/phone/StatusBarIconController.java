@@ -594,6 +594,7 @@ public class StatusBarIconController extends StatusBarIconList implements Tunabl
 	mNetworkTraffic.setDarkIntensity(mDarkIntensity);
         mWeatherTextView.setTextColor(mIconTint);
         mWeatherImageView.setImageTintList(ColorStateList.valueOf(mIconTint));
+        mPhoneStatusBar.setTickerTint(mIconTint);
     }
 
     public void appTransitionPending() {
