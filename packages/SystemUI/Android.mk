@@ -60,6 +60,9 @@ ifneq ($(SYSTEM_UI_INCREMENTAL_BUILDS),)
     LOCAL_JACK_ENABLED := incremental
 endif
 
+# Slim Framework
+include frameworks/slim/packages/SlimSystemUI/SlimSystemUI.mk
+
 include frameworks/base/packages/SettingsLib/common.mk
 
 include $(BUILD_PACKAGE)
