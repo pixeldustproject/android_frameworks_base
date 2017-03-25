@@ -133,12 +133,16 @@ public class RecentPanelView {
     private boolean mIsLoading;
 
     private int mMainGravity;
+    private int mMaxAppsToLoad;
     private float mScaleFactor;
     private int mExpandedMode = EXPANDED_MODE_AUTO;
+    private boolean mIsScreenPinningEnabled;
     private boolean mShowTopTask;
     private boolean mOnlyShowRunningTasks;
     private static int mOneHandMode;
     private static int mCardColor = 0x0ffffff;
+
+    private String mCurrentFavorites = "";
 
     final static BitmapFactory.Options sBitmapOptions;
 
@@ -273,7 +277,7 @@ public class RecentPanelView {
             final boolean isExpanded =
                     ((isSystemExpanded && !isUserCollapsed) || isUserExpanded) && !isTopTask;
 
-            boolean screenPinningEnabled = screenPinningEnabled();
+            boolean screenPinningEnabled = mIsScreenPinningEnabled;
             expanded = isExpanded;
             expandVisible = !isTopTask;
             customIcon = isTopTask && screenPinningEnabled;
@@ -292,11 +296,6 @@ public class RecentPanelView {
                     }
                 }
             };
-        }
-
-        private boolean screenPinningEnabled() {
-            return Settings.System.getInt(mContext.getContentResolver(),
-                Settings.System.LOCK_TO_APP_ENABLED, 0) != 0;
         }
 
         private Intent getAppInfoIntent() {
@@ -528,9 +527,7 @@ public class RecentPanelView {
      */
     private void handleFavoriteEntry(TaskDescription td) {
         ContentResolver resolver = mContext.getContentResolver();
-        final String favorites = Settings.System.getStringForUser(
-                    resolver, Settings.System.RECENT_PANEL_FAVORITES,
-                    UserHandle.USER_CURRENT);
+        final String favorites = mCurrentFavorites;
         String entryToSave = "";
 
         if (!td.getIsFavorite()) {
@@ -555,6 +552,7 @@ public class RecentPanelView {
 
         td.setIsFavorite(!td.getIsFavorite());
 
+        RecentController.shouldHidePanel = false;
         Settings.System.putStringForUser(
                 resolver, Settings.System.RECENT_PANEL_FAVORITES,
                 entryToSave,
@@ -910,6 +908,10 @@ public class RecentPanelView {
         mCardColor = color;
     }
 
+    protected void setCurrentFavorites(String favorites) {
+        mCurrentFavorites = favorites;
+    }
+
     /**
      * Notify listener that tasks are loaded.
      */
@@ -970,9 +972,7 @@ public class RecentPanelView {
             mCounter = 0;
 
             // Check and get user favorites.
-            final String favorites = Settings.System.getStringForUser(
-                    mContext.getContentResolver(), Settings.System.RECENT_PANEL_FAVORITES,
-                    UserHandle.USER_CURRENT);
+            final String favorites = mCurrentFavorites;
             final ArrayList<String> favList = new ArrayList<>();
             final ArrayList<TaskDescription> nonFavoriteTasks = new ArrayList<>();
             if (favorites != null && !favorites.isEmpty()) {
@@ -984,10 +984,6 @@ public class RecentPanelView {
             final PackageManager pm = mContext.getPackageManager();
             final ActivityManager am = (ActivityManager)
                     mContext.getSystemService(Context.ACTIVITY_SERVICE);
-
-            int maxNumTasksToLoad = Settings.System.getIntForUser(mContext.getContentResolver(),
-                    Settings.System.RECENTS_MAX_APPS, 15,
-                    UserHandle.USER_CURRENT);
 
             final List<ActivityManager.RecentTaskInfo> recentTasks =
                     am.getRecentTasksForUser(ActivityManager.getMaxRecentTasksStatic(),
@@ -1055,7 +1051,7 @@ public class RecentPanelView {
 
                 if (item != null) {
                     // Remove any tasks after our max task limit to keep good ux
-                    if (i >= maxNumTasksToLoad) {
+                    if (i >= mMaxAppsToLoad) {
                         am.removeTask(item.persistentTaskId);
                         continue;
                     }
@@ -1067,7 +1063,7 @@ public class RecentPanelView {
                     }
 
                     if (topTask) {
-                        if (mShowTopTask || screenPinningEnabled()) {
+                        if (mShowTopTask || mIsScreenPinningEnabled) {
                             // User want to see actual running task. Set it here
                             int oldState = getExpandedState(item);
                             if ((oldState & EXPANDED_STATE_TOPTASK) == 0) {
@@ -1262,9 +1258,12 @@ public class RecentPanelView {
         return null;
     }
 
-    private boolean screenPinningEnabled() {
-        return Settings.System.getInt(mContext.getContentResolver(),
-                Settings.System.LOCK_TO_APP_ENABLED, 0) != 0;
+    protected void isScreenPinningEnabled(boolean enabled) {
+        mIsScreenPinningEnabled = enabled;
+    }
+
+    protected void setMaxAppsToLoad(int max) {
+        mMaxAppsToLoad = max;
     }
 
     /**
