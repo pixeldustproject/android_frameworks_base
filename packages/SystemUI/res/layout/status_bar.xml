@@ -66,9 +66,11 @@
                 android:id="@+id/networkTraffic"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:singleLine="false"
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="2dp"
+                android:maxLines="2"
                 android:fontFamily="sans-serif-condensed"
-                android:gravity="right|center_vertical"/>
+                android:gravity="end|center_vertical"/>
 
             <include layout="@layout/system_icons" />
 
