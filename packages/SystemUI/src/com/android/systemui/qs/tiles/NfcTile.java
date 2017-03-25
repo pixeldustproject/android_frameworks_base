@@ -59,23 +59,13 @@ public class NfcTile extends QSTile<QSTile.BooleanState> {
     }
 
     @Override
-    public Intent getLongClickIntent() {
-        return new Intent("android.settings.NFC_SETTINGS");
-    }
-
-    @Override
-    public CharSequence getTileLabel() {
-        return mContext.getString(R.string.quick_settings_nfc_label);
-    }
-
-    @Override
     public int getMetricsCategory() {
         return MetricsEvent.NFC_BEAM;
     }
 
     @Override
-    public boolean isAvailable() {
-        return mContext.getPackageManager().hasSystemFeature(PackageManager.FEATURE_NFC);
+    protected void handleSecondaryClick() {
+        handleClick();
     }
 
     protected void toggleState() {
@@ -107,6 +97,18 @@ public class NfcTile extends QSTile<QSTile.BooleanState> {
 
     private int getNfcState() {
         return mNfcAdapter.getAdapterState();
+    }
+
+    @Override
+    public Intent getLongClickIntent() {
+        Intent intent = new Intent("android.settings.NFC_SETTINGS");
+        intent.addCategory(Intent.CATEGORY_DEFAULT);
+        return intent;
+    }
+
+    @Override
+    public CharSequence getTileLabel() {
+        return mContext.getString(R.string.quick_settings_nfc_label);
     }
 
     @Override
