@@ -81,9 +81,7 @@ public class AmbientDisplayConfiguration {
     }
 
     private boolean boolSetting(String name, int user) {
-        int dozeEnabled = mContext.getResources().getBoolean(
-            com.android.internal.R.bool.config_doze_enabled_by_default) ? 1 : 0;
-        return Settings.Secure.getIntForUser(mContext.getContentResolver(), name, dozeEnabled, user) != 0;
+        return Settings.Secure.getIntForUser(mContext.getContentResolver(), name, 0, user) != 0;
     }
 
 }
