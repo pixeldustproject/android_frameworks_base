@@ -342,27 +342,27 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
             if (GLOBAL_ACTION_KEY_REBOOT.equals(actionKey)) {
                 if (Settings.System.getInt(mContext.getContentResolver(),
                         Settings.System.POWERMENU_REBOOT, 1) == 1) {
-                mItems.add(new RebootAction());
+                    mItems.add(new RebootAction());
                 }
             } else if (GLOBAL_ACTION_KEY_SCREENSHOT.equals(actionKey)) {
                 if (Settings.System.getInt(mContext.getContentResolver(),
-                        Settings.System.POWERMENU_SCREENSHOT, 1) == 1) {
+                        Settings.System.POWERMENU_SCREENSHOT, 0) == 1) {
                     mItems.add(new ScreenshotAction());
                 }
             } else if (GLOBAL_ACTION_KEY_SCREENRECORD.equals(actionKey)) {
                 if (Settings.System.getInt(mContext.getContentResolver(),
-                        Settings.System.POWERMENU_SCREENRECORD, 1) == 1) {
+                        Settings.System.POWERMENU_SCREENRECORD, 0) == 1) {
                     mItems.add(getScreenRecordAction());
                 }
             } else if (GLOBAL_ACTION_KEY_TORCH.equals(actionKey)) {
                 if (Settings.System.getInt(mContext.getContentResolver(),
-                        Settings.System.POWERMENU_TORCH, 0) != 0) {
-                mItems.add(getTorchToggleAction());
+                        Settings.System.POWERMENU_TORCH, 0) == 1) {
+                    mItems.add(getTorchToggleAction());
                 }
             } else if (GLOBAL_ACTION_KEY_AIRPLANE.equals(actionKey)) {
                 if (Settings.System.getInt(mContext.getContentResolver(),
                         Settings.System.POWERMENU_AIRPLANE, 1) == 1) {
-                mItems.add(mAirplaneModeOn);
+                    mItems.add(mAirplaneModeOn);
                 }
             } else if (GLOBAL_ACTION_KEY_BUGREPORT.equals(actionKey)) {
                 if (Settings.Global.getInt(mContext.getContentResolver(),
@@ -371,12 +371,12 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
                 }
             } else if (GLOBAL_ACTION_KEY_SETTINGS.equals(actionKey)) {
                 if (Settings.System.getInt(mContext.getContentResolver(),
-                        Settings.System.POWERMENU_SETTINGS, 0) != 0) {
+                        Settings.System.POWERMENU_SETTINGS, 0) == 1) {
                     mItems.add(getSettingsAction());
                 }
             } else if (GLOBAL_ACTION_KEY_LOCKDOWN.equals(actionKey)) {
                 if (Settings.System.getInt(mContext.getContentResolver(),
-                        Settings.System.POWERMENU_LOCKDOWN, 0) != 0) {
+                        Settings.System.POWERMENU_LOCKDOWN, 0) == 1) {
                     mItems.add(getLockdownAction());
                 }
             } else if (GLOBAL_ACTION_KEY_USERS.equals(actionKey)) {
@@ -386,17 +386,17 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
                 }
             } else if (GLOBAL_ACTION_KEY_VOICEASSIST.equals(actionKey)) {
                 if (Settings.System.getInt(mContext.getContentResolver(),
-                        Settings.System.POWERMENU_VOICEASSIST, 0) != 0) {
+                        Settings.System.POWERMENU_VOICEASSIST, 0) == 1) {
                     mItems.add(getVoiceAssistAction());
                 }
             } else if (GLOBAL_ACTION_KEY_ASSIST.equals(actionKey)) {
                 if (Settings.System.getInt(mContext.getContentResolver(),
-                        Settings.System.POWERMENU_ASSIST, 0) != 0) {
+                        Settings.System.POWERMENU_ASSIST, 0) == 1) {
                     mItems.add(getAssistAction());
                 }
             } else if (GLOBAL_ACTION_KEY_SILENT.equals(actionKey)) {
                 if (Settings.System.getInt(mContext.getContentResolver(),
-                        Settings.System.POWERMENU_SOUNDPANEL, 1) == 1) {
+                        Settings.System.POWERMENU_SOUNDPANEL, 0) == 1) {
                     mItems.add(mSilentModeAction);
                 }
             } else {
