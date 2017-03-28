@@ -38,6 +38,9 @@
   <string name="global_action_search">Suche</string>
   <string name="global_action_torch">Taschenlampe</string>
   <string name="global_action_voicesearch">Sprachsuche</string>
+  <string name="global_action_users">Nutzer wechseln</string>
+  <string name="global_action_onthego">On-The-Go Modus</string>
+
   <!-- Long-press back kill application -->
   <string name="app_killed_message"><xliff:g id="string">%s </xliff:g> beendet</string>
   <string name="no_app_killed_message">Nichts zu Beenden</string>
