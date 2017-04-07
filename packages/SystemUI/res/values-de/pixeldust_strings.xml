@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     Copyright (C) 2017 The PixelDust Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+
+    <!-- QS columns count configurable -->
+    <string name="qs_menu_item_columns">Spalten Hochformat</string>
+    <string name="qs_menu_item_columns_landscape">Spalten Querformat</string>
+    <string name="qs_menu_item_rows">Zeilen Hochformat</string>
+    <string name="qs_menu_item_rows_landscape">Zeilen Querformat</string>
+    <string name="qs_menu_item_reset">Zurücksetzen</string>
+
+    <string name="qs_menu_item_titles">Beschriftung ausblenden</string>
+
+    <!-- On The Go -->
+    <string name="onthego_notif_ticker">On-The-Go an</string>
+    <string name="onthego_notif_title">On-The-Go aus</string>
+    <string name="onthego_notif_stop">Stopp</string>
+    <string name="onthego_notif_options">Optionen</string>
+    <string name="onthego_notif_error">On-The-Go kann nicht gestartet werden</string>
+    <string name="onthego_notif_restart">On-The-Go neustarten</string>
+    <string name="onthego_notif_camera_changed">Kamera-Modus geändert</string>
+    <string name="onthego_transparency">Transparenz</string>
+    <string name="onthego_front_camera">Vordere Kamera verwenden</string>
+    <string name="onthego_service_toggle">Dienst automatisch neustarten</string>
+
+    <!-- Slim recent app screen-->
+    <string name="recents_multiwin_warning">Eine Multiwindow-Sitzung ist bereits aktiv.\nEinfach eine App antippen, falls diese jetzt angedockt werden soll.</string>
+    <string name="recents_multiwin_nolastapp">Anwendungsverlauf wurde bereinigt. Bitte eine App aus dem Launcher oder Appdrawer starten.</string>
+    <string name="slim_recent_keyguard">Gerät entsperren um den Anwendungsverlauf anzusehen</string>
+    <string name="slim_recent_pinned">Bildschirmansicht lösen um den Anwendungsverlauf anzusehen</string>
+
+    <!-- Slim recents membar -->
+    <string name="recents_free_ram">RAM: %1$d MB verfügbar</string>
+
+    <!-- Slim recents app sidebar queue app toast -->
+    <string name="toast_recents_queue_app">Starte %s nach Schließen des Anwendungsverlaufs</string>
+    <string name="toast_recents_cancel_queued_app">Appstart abgebrochen</string>
+
+    <!-- Compass QS Tile -->
+    <string name="quick_settings_compass_label">Kompass</string>
+    <string name="quick_settings_compass_init">Initialisiere\u2026</string>
+    <string name="accessibility_quick_settings_compass_off">Kompass aus.</string>
+    <string name="accessibility_quick_settings_compass_on">Kompass ein.</string>
+    <string name="accessibility_quick_settings_compass_changed_off">Kompass ausgeschaltet.</string>
+    <string name="accessibility_quick_settings_compass_changed_on">Kompass eingeschaltet.</string>
+    <string name="quick_settings_compass_N">N</string>
+    <string name="quick_settings_compass_NE">NO</string>
+    <string name="quick_settings_compass_E">O</string>
+    <string name="quick_settings_compass_SE">SO</string>
+    <string name="quick_settings_compass_S">S</string>
+    <string name="quick_settings_compass_SW">SW</string>
+    <string name="quick_settings_compass_W">W</string>
+    <string name="quick_settings_compass_NW">NW</string>
+
+    <!-- Google Assist & Voice Assist QS Tile -->
+    <string name="quick_settings_google_assist_label">Assistent</string>
+    <string name="quick_settings_google_voice_assist_label">Sprachassistent</string>
+
+    <!-- Language QS Tile -->
+    <string name="quick_settings_locale_label">Sprache</string>
+    <string name="quick_settings_locale_more_locales_toast">Bitte eine weitere Sprache hinzufügen, um die Umschaltfunktion nutzen zu können</string>
+
+    <!-- OmniJaws weather qs tile -->
+    <string name="omnijaws_service_error">Fehler</string>
+    <string name="omnijaws_service_unkown">Keine Wetterdaten vorhanden</string>
+    <string name="omnijaws_detail_header">Wetter</string>
+    <string name="omnijaws_label_default">Wetter</string>
+    <string name="omnijaws_current_text">Jetzt</string>
+    <string name="omnijaws_package_not_available">OmniJaws nicht verfügbar</string>
+
+    <!-- High Brightness Mode Tile -->
+    <string name="quick_settings_high_brightness">Hohe Helligkeit</string>
+</resources>
