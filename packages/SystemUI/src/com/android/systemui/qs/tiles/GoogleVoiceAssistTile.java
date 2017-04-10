@@ -57,7 +57,9 @@ public class GoogleVoiceAssistTile extends QSTile<QSTile.BooleanState>  {
 
     @Override
     protected void handleClick() {
-        mHost.startActivityDismissingKeyguard(getVoiceAssistIntent());
+        if (isAsistInstalled()) {
+            mHost.startActivityDismissingKeyguard(getVoiceAssistIntent());
+        }
     }
 
     @Override
@@ -74,6 +76,9 @@ public class GoogleVoiceAssistTile extends QSTile<QSTile.BooleanState>  {
 
     @Override
     public Intent getLongClickIntent() {
+        if (isAsistInstalled()) {
+            return getVoiceAssistIntent();
+        }
         return null;
     }
 
