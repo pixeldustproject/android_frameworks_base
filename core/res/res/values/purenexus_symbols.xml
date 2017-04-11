@@ -159,4 +159,8 @@
   <java-symbol type="string" name="adb_net_active_notification_title" />
   <java-symbol type="string" name="adb_both_active_notification_title" />
   <java-symbol type="string" name="adb_active_generic_notification_message" />
+
+  <!-- call removeCient in cancelAuthentification after stop to
+        avoid 3s delay for certain fpc HALs -->
+  <java-symbol type="bool" name="config_fingerprintRemoveClientOnCancel" />
 </resources>
