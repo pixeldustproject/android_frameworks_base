@@ -371,7 +371,7 @@ public class KeyguardStatusView extends GridLayout implements
                     mWeatherConditionText.setText(mWeatherData.condition);
                 if (mWeatherView != null)
                     mWeatherView.setVisibility(mShowWeather ? View.VISIBLE : View.GONE);
-                updateSettings(false);
+                queryAndUpdateWeather();
             } else {
                 if (mWeatherCity != null)
                     mWeatherCity.setText(null);
@@ -549,19 +549,19 @@ public class KeyguardStatusView extends GridLayout implements
                  refreshLockFont();
              } else if (uri.equals(Settings.System.getUriFor(
                      Settings.System.LOCK_SCREEN_WEATHER_NUMBER_OF_NOTIFICATIONS))) {
-                 updateSettings(false);
+                 queryAndUpdateWeather();
              } else if (uri.equals(Settings.System.getUriFor(
                      Settings.System.LOCK_SCREEN_WEATHER_HIDE_PANEL))) {
-                 updateSettings(false);
+                 queryAndUpdateWeather();
              } else if (uri.equals(Settings.System.getUriFor(
                      Settings.System.LOCK_SCREEN_SHOW_WEATHER))) {
-                 updateSettings(false);
+                 queryAndUpdateWeather();
              } else if (uri.equals(Settings.System.getUriFor(
                      Settings.System.LOCK_SCREEN_SHOW_WEATHER_LOCATION))) {
-                 updateSettings(false);
+                 queryAndUpdateWeather();
              } else if (uri.equals(Settings.System.getUriFor(
                      Settings.System.LOCK_SCREEN_VISIBLE_NOTIFICATIONS))) {
-                 updateSettings(false);
+                 queryAndUpdateWeather();
              } else if (uri.equals(Settings.System.getUriFor(
                      Settings.System.OMNIJAWS_WEATHER_ICON_PACK))) {
                  queryAndUpdateWeather();
