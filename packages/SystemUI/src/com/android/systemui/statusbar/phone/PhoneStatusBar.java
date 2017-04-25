@@ -528,6 +528,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             if (mNotificationPanel != null) {
                 mNotificationPanel.updateSettings();
             }
+            if (mHeader != null) {
+                mHeader.updateSettings();
+            }
         }
     }
 
