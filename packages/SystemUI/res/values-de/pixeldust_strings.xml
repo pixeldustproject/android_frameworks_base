@@ -84,4 +84,9 @@
 
     <!-- High Brightness Mode Tile -->
     <string name="quick_settings_high_brightness">Hohe Helligkeit</string>
+
+    <!-- Headsup tile -->
+    <string name="quick_settings_heads_up_on">Heads Up Benachrichtigungen an</string>
+    <string name="quick_settings_heads_up_off">Heads Up Benachrichtigungen aus</string>
+    <string name="quick_settings_heads_up">Heads Up Benachrichtigungen</string>
 </resources>
