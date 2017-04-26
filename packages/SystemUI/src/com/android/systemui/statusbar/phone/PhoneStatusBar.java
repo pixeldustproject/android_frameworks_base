@@ -511,6 +511,15 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         @Override
         public void onChange(boolean selfChange, Uri uri) {
             update();
+            if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.QS_LAYOUT_ROWS))
+                    || uri.equals(Settings.System.getUriFor(
+                    Settings.System.QS_LAYOUT_ROWS_LANDSCAPE))) {
+                    // Update the quick setting tiles
+                    if (mQSPanel != null) {
+                        mQSPanel.updateResources();
+                    }
+            }
         }
 
         public void update() {
