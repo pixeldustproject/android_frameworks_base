@@ -511,6 +511,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.BATTERY_SAVER_MODE_COLOR),
                     false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                  Settings.System.QS_FOOTER_WARNINGS),
+                  false, this, UserHandle.USER_ALL);
             update();
         }
 
