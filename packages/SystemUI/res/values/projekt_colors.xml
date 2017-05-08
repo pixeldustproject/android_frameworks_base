@@ -30,8 +30,6 @@
     <color name="qs_battery_graph_text_color">#66FFFFFF</color>
     <!-- QS battery accent color -->
     <color name="qs_battery_accent">@*android:color/accent_device_default_light</color>
-    <!-- Custom battery frame color on darkintensity -->
-    <color name="batterymeter_frame_color_darkintensity">@color/dark_mode_icon_color_dual_tone_background</color>
     <!-- External QS tile tint color -->
     <color name="external_qs_tile_tint_color">@android:color/white</color>
     <!-- OmniJaws detailed view temperature text -->
