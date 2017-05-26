@@ -2807,6 +2807,12 @@ public final class Settings {
         public static final String DOZE_TRIGGER_PICKUP = "doze_trigger_pickup";
 
         /**
+         * Use tilt gesture sensor as doze pulse trigger
+         * @hide
+         */
+        public static final String DOZE_TRIGGER_TILT = "doze_trigger_tilt";
+
+        /**
          * Use significant motion sensor as doze pulse trigger
          * @hide
          */
@@ -7160,6 +7166,12 @@ public final class Settings {
          * @hide
          */
         public static final String DOZE_PULSE_ON_PICK_UP = "doze_pulse_on_pick_up";
+
+        /**
+         * Whether the device should pulse on tilt gesture.
+         * @hide
+         */
+        public static final String DOZE_PULSE_ON_TILT = "doze_pulse_on_tilt";
 
         /**
          * Whether the device should pulse on double tap gesture.
