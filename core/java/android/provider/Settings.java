@@ -2813,6 +2813,18 @@ public final class Settings {
         public static final String DOZE_TRIGGER_TILT = "doze_trigger_tilt";
 
         /**
+         * Use hand wave as doze pulse triggers
+         * @hide
+         */
+        public static final String DOZE_TRIGGER_HAND_WAVE = "doze_trigger_hand_wave";
+
+        /**
+         * Use out of pocket as doze pulse triggers
+         * @hide
+         */
+        public static final String DOZE_TRIGGER_POCKET = "doze_trigger_pocket";
+
+        /**
          * Use significant motion sensor as doze pulse trigger
          * @hide
          */
@@ -7178,6 +7190,12 @@ public final class Settings {
          * @hide
          */
         public static final String DOZE_PULSE_ON_DOUBLE_TAP = "doze_pulse_on_double_tap";
+
+        /**
+         * Whether the device should pulse on hand wave / pocket mode gesture.
+         * @hide
+         */
+        public static final String DOZE_PULSE_ON_PROXIMITY = "doze_pulse_on_proximity";
 
         /**
          * The current night mode that has been selected by the user.  Owned
