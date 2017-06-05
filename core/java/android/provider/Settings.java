@@ -4623,6 +4623,12 @@ public final class Settings {
         public static final String BATTERY_SAVER_MODE_COLOR = "battery_save_mode_color";
 
         /**
+         * Wheter to use corner radius for Slim Recents cards
+         * @hide
+         */
+        public static final String SLIM_RECENTS_CORNER_RADIUS = "slim_recents_corner_radius";
+
+        /**
          * Whether to show QS footer warnings
          * @hide
          */

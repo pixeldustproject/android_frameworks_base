@@ -67,6 +67,8 @@ public class ExpandableCardAdapter extends RecyclerView.Adapter<ExpandableCardAd
         holder.screenshot.setVisibility(card.expanded ? View.VISIBLE : View.GONE);
         holder.expandButton.setRotation(card.expanded ? -180 : 0);
 
+        holder.card.setRadius(card.cornerRadius);
+
         if (card.customIcon) {
             holder.expandButton.setImageDrawable(card.custom);
             holder.expandButton.setOnClickListener(card.customClickListener);
@@ -298,6 +300,7 @@ public class ExpandableCardAdapter extends RecyclerView.Adapter<ExpandableCardAd
         boolean expandVisible = true;
         boolean customIcon = false;
         boolean favorite = false;
+        float cornerRadius;
         View.OnLongClickListener appIconLongClickListener;
         int cardBackgroundColor;
         Drawable custom;
