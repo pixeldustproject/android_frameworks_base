@@ -411,7 +411,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     int mStatusBarHeight;
     WindowState mNavigationBar = null;
     boolean mHasNavigationBar = false;
-    boolean mOverWriteHasNavigationBar = false;
     boolean mNavigationBarCanMove = false; // can the navigation bar ever move to the side?
     int mNavigationBarPosition = NAV_BAR_BOTTOM;
     int[] mNavigationBarHeightForRotationDefault = new int[4];
@@ -1004,9 +1003,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.NAVIGATION_BAR_WIDTH), false, this,
-                    UserHandle.USER_ALL);
-            resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.NAVIGATION_BAR_SHOW), false, this,
                     UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.SCREENRECORD_CHORD_TYPE), false, this,
@@ -2349,16 +2345,14 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         // Allow the navigation bar to move on non-square small devices (phones).
         mNavigationBarCanMove = width != height && shortSizeDp < 600;
 
-        setHasNavigationBar();
+        mHasNavigationBar = res.getBoolean(com.android.internal.R.bool.config_showNavigationBar);
         // Allow a system property to override this. Used by the emulator.
         // See also hasNavigationBar().
         String navBarOverride = SystemProperties.get("qemu.hw.mainkeys");
         if ("1".equals(navBarOverride)) {
             mHasNavigationBar = false;
-            mOverWriteHasNavigationBar = true;
         } else if ("0".equals(navBarOverride)) {
             mHasNavigationBar = true;
-            mOverWriteHasNavigationBar = true;
         }
 
         // For demo purposes, allow the rotation of the HDMI display to be controlled.
@@ -2388,34 +2382,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 // $ adb shell setprop config.override_forced_orient true
                 // $ adb shell wm size reset
                 !"true".equals(SystemProperties.get("config.override_forced_orient"));
-    }
-
-    private void setHasNavigationBar() {
-        final boolean showByDefault = mContext.getResources().getBoolean(
-                com.android.internal.R.bool.config_showNavigationBar);
-        final int hasNavigationBar = Settings.System.getIntForUser(
-                mContext.getContentResolver(),
-                Settings.System.NAVIGATION_BAR_SHOW, -1,
-                UserHandle.USER_CURRENT);
-
-        // Allow a system property to override this if the provider value was never set.
-        // Used by the emulator.
-        // See also hasNavigationBar().
-        if (hasNavigationBar == -1) {
-            String navBarOverride = SystemProperties.get("qemu.hw.mainkeys");
-            if ("1".equals(navBarOverride)) {
-                mHasNavigationBar = false;
-                mOverWriteHasNavigationBar = true;
-            } else if ("0".equals(navBarOverride)) {
-                mHasNavigationBar = true;
-                mOverWriteHasNavigationBar = true;
-            } else {
-                mHasNavigationBar = showByDefault;
-                mOverWriteHasNavigationBar = false;
-            }
-        } else {
-            mHasNavigationBar = hasNavigationBar == 1;
-        }
     }
 
     /**
@@ -2501,9 +2467,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 updateOrientationListenerLp();
             }
 
-            // Navbr on/off and custom dimensions
-            setHasNavigationBar();
-
+            // Navbar custom dimensions
             mNavigationBarHeight =
                     Settings.System.getIntForUser(mContext.getContentResolver(),
                             Settings.System.NAVIGATION_BAR_HEIGHT, -2,
@@ -8709,10 +8673,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     // overridden by qemu.hw.mainkeys in the emulator.
     @Override
     public boolean hasNavigationBar() {
-        return mOverWriteHasNavigationBar
-            ? mHasNavigationBar
-            : mContext.getResources().getBoolean(
-                    com.android.internal.R.bool.config_showNavigationBar);
+        return mHasNavigationBar;
     }
 
     @Override
