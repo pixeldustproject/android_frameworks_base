@@ -50,4 +50,8 @@
     <color name="battery_normal_charge_level_tile">#ffffff</color> <!-- level color when >15 for the tile battery -->
     <color name="battery_low_charge_level_tile">@color/battery_charge_level_low_level</color> <!-- level color when >15 for the tile battery -->
     <color name="status_bar_battery_level_text_color">#ffffff</color> <!-- percentage text outside battery icon -->
+
+    <!-- Screen pinning layout -->
+    <color name="screen_pinning_background_color">@*android:color/accent_device_default_light</color>
+    <color name="screen_pinning_button_text">@android:color/white</color>
 </resources>
