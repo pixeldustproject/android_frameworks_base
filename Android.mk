@@ -476,6 +476,8 @@ LOCAL_SRC_FILES += \
 LOCAL_SRC_FILES +=  \
 	../../system/netd/server/binder/android/net/INetd.aidl \
 
+LOCAL_SRC_FILES += $(call all-Iaidl-files-under,src)
+
 LOCAL_AIDL_INCLUDES += system/update_engine/binder_bindings
 
 # FRAMEWORKS_BASE_JAVA_SRC_DIRS comes from build/core/pathmap.mk
