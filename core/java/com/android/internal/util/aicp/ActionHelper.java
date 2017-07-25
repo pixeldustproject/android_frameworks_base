@@ -34,9 +34,52 @@ import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 
+import com.android.internal.util.aicp.ConfigSplitHelper;
+
 public class ActionHelper {
 
     private static final String SYSTEMUI_METADATA_NAME = "com.android.systemui";
+    private static final String SETTINGS_METADATA_NAME = "com.android.settings";
+    private static final String SYSTEM_METADATA_NAME = "android";
+    private static final String SLIM_FRAMEWORK_METADATA_NAME = "slim";
+
+    // get and set the navbar configs from provider and return propper arraylist objects
+    // @ActionConfig
+    public static ArrayList<ActionConfig> getNavBarConfig(Context context) {
+        return (ConfigSplitHelper.getActionConfigValues(context,
+            getNavBarProvider(context), null, null, false));
+    }
+
+    // get @ActionConfig with description if needed and other then an app description
+    public static ArrayList<ActionConfig> getNavBarConfigWithDescription(
+            Context context, String values, String entries) {
+        return (ConfigSplitHelper.getActionConfigValues(context,
+            getNavBarProvider(context), values, entries, false));
+    }
+
+    private static String getNavBarProvider(Context context) {
+        String config = Settings.System.getStringForUser(
+                    context.getContentResolver(),
+                    Settings.System.NAVIGATION_BAR_CONFIG,
+                    UserHandle.USER_CURRENT);
+        if (config == null) {
+            config = ActionConstants.NAVIGATION_CONFIG_DEFAULT;
+        }
+        return config;
+    }
+
+    public static void setNavBarConfig(Context context,
+            ArrayList<ActionConfig> actionConfig, boolean reset) {
+        String config;
+        if (reset) {
+            config = ActionConstants.NAVIGATION_CONFIG_DEFAULT;
+        } else {
+            config = ConfigSplitHelper.setActionConfig(actionConfig, false);
+        }
+        Settings.System.putString(context.getContentResolver(),
+                    Settings.System.NAVIGATION_BAR_CONFIG,
+                    config);
+    }
 
     public static ArrayList<ActionConfig> getRecentAppSidebarConfig(Context context) {
         return (ConfigSplitHelper.getActionConfigValues(context,

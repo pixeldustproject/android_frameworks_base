@@ -48,7 +48,7 @@ public class ConfigSplitHelper {
             if (counter == 1) {
                 actionConfig = new ActionConfig(configValue,
                             AppHelper.getProperSummary(context, pm, settingsResources,
-                            configValue, values, entries), null, null, null);
+                            configValue, values, entries), null, null, null, null, null);
             }
             if (counter == 2) {
                 if (isShortcut) {
