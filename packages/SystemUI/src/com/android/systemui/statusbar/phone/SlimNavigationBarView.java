@@ -34,6 +34,7 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.VectorDrawable;
 import android.os.RemoteException;
 import android.os.UserHandle;
+import android.provider.Settings;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.TypedValue;
@@ -60,12 +61,11 @@ import com.android.systemui.statusbar.slim.SlimKeyButtonView;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slim.action.ActionConfig;
-import org.slim.action.ActionConstants;
-import org.slim.action.ActionHelper;
-import org.slim.provider.SlimSettings;
-import org.slim.utils.ImageHelper;
-import org.slim.utils.DeviceUtils;
+import com.android.internal.util.aicp.ActionConfig;
+import com.android.internal.util.aicp.ActionConstants;
+import com.android.internal.util.aicp.ActionHelper;
+import com.android.internal.util.aicp.ImageHelper;
+import com.android.internal.util.omni.DeviceUtils;
 
 public class SlimNavigationBarView extends NavigationBarView {
 
@@ -258,8 +258,8 @@ public class SlimNavigationBarView extends NavigationBarView {
 
         mButtonIdList.clear();
 
-        mRippleColor = SlimSettings.System.getIntForUser(mContext.getContentResolver(),
-                SlimSettings.System.NAVIGATION_BAR_GLOW_TINT, -2, UserHandle.USER_CURRENT);
+        mRippleColor = Settings.System.getIntForUser(mContext.getContentResolver(),
+                Settings.System.NAVIGATION_BAR_GLOW_TINT, -2, UserHandle.USER_CURRENT);
 
         ((LinearLayout) mRot0.findViewById(R.id.nav_buttons)).removeAllViews();
         ((LinearLayout) mRot0.findViewById(R.id.lights_out)).removeAllViews();
@@ -663,8 +663,8 @@ public class SlimNavigationBarView extends NavigationBarView {
             mRotatedViews[i].setVisibility(View.GONE);
         }
 
-        if (SlimSettings.System.getIntForUser(mContext.getContentResolver(),
-                SlimSettings.System.NAVIGATION_BAR_CAN_MOVE,
+        if (Settings.System.getIntForUser(mContext.getContentResolver(),
+                Settings.System.NAVIGATION_BAR_CAN_MOVE,
                 DeviceUtils.isPhone(mContext) ? 1 : 0, UserHandle.USER_CURRENT) != 1) {
             mCurrentView = mRotatedViews[Surface.ROTATION_0];
         } else {
@@ -794,25 +794,25 @@ public class SlimNavigationBarView extends NavigationBarView {
     private void updateSettings(boolean recreate) {
         ContentResolver resolver = mContext.getContentResolver();
 
-        mNavBarButtonColor = SlimSettings.System.getIntForUser(resolver,
-                SlimSettings.System.NAVIGATION_BAR_BUTTON_TINT, -2, UserHandle.USER_CURRENT);
+        mNavBarButtonColor = Settings.System.getIntForUser(resolver,
+                Settings.System.NAVIGATION_BAR_BUTTON_TINT, -2, UserHandle.USER_CURRENT);
 
         if (mNavBarButtonColor == -2) {
             mNavBarButtonColor = mContext.getResources()
                     .getColor(R.color.navigationbar_button_default_color);
         }
 
-        mNavBarButtonColorMode = SlimSettings.System.getIntForUser(resolver,
-                SlimSettings.System.NAVIGATION_BAR_BUTTON_TINT_MODE, 0, UserHandle.USER_CURRENT);
+        mNavBarButtonColorMode = Settings.System.getIntForUser(resolver,
+                Settings.System.NAVIGATION_BAR_BUTTON_TINT_MODE, 0, UserHandle.USER_CURRENT);
 
         mButtonsConfig = ActionHelper.getNavBarConfig(mContext);
 
-        mMenuSetting = SlimSettings.System.getIntForUser(resolver,
-                SlimSettings.System.MENU_LOCATION, SHOW_RIGHT_MENU,
+        mMenuSetting = Settings.System.getIntForUser(resolver,
+                Settings.System.MENU_LOCATION, SHOW_RIGHT_MENU,
                 UserHandle.USER_CURRENT);
 
-        mMenuVisibility = SlimSettings.System.getIntForUser(resolver,
-                SlimSettings.System.MENU_VISIBILITY, MENU_VISIBILITY_SYSTEM,
+        mMenuVisibility = Settings.System.getIntForUser(resolver,
+                Settings.System.MENU_VISIBILITY, MENU_VISIBILITY_SYSTEM,
                 UserHandle.USER_CURRENT);
 
         getIcons(getContext().getResources());
