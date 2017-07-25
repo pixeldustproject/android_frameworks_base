@@ -138,6 +138,7 @@ public class RecentController implements RecentPanelView.OnExitListener,
     private ActivityManager mAm;
     private int mMembarcolor;
     private int mMemtextcolor;
+    private int mWarningColor;
 
     private boolean mMemBarLongClickToClear;
 
@@ -326,8 +327,7 @@ public class RecentController implements RecentPanelView.OnExitListener,
         mEmptyRecentView.setImageResource(0);
 
         // Set correct backgrounds based on calculated main gravity.
-        int warningColor = mContext.getResources().getColor(R.color.recent_warning_background);
-        mRecentWarningContent.setBackgroundColor(warningColor);
+        mRecentWarningContent.setBackgroundColor(mWarningColor);
 
         int tintColor = getEmptyRecentColor();
         int backgroundColor = mPanelColor;
@@ -752,6 +752,7 @@ public class RecentController implements RecentPanelView.OnExitListener,
             // Update colors in RecentPanelView
             mPanelColor = Settings.System.getIntForUser(resolver,
                     Settings.System.RECENT_PANEL_BG_COLOR, 0x763367d6, UserHandle.USER_CURRENT);
+            mWarningColor = (0xff000000 | mPanelColor);
 
             // Set main gravity and background images.
             setGravityAndImageResources();
