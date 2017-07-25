@@ -23,20 +23,19 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.database.ContentObserver;
 import android.graphics.PixelFormat;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.RemoteException;
 import android.os.UserHandle;
 import android.provider.Settings;
 import android.util.Log;
-import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.view.WindowManager;
 
 import com.android.systemui.R;
-import com.android.systemui.slimrecent.RecentController;
 import com.android.systemui.statusbar.phone.SlimNavigationBarView;
 import com.android.systemui.statusbar.phone.NavigationBarView;
 import com.android.systemui.statusbar.phone.PhoneStatusBar;
@@ -47,8 +46,6 @@ public class SlimStatusBar extends PhoneStatusBar {
     private static final String TAG = SlimStatusBar.class.getSimpleName();
 
     private SlimNavigationBarView mSlimNavigationBarView;
-    private RecentController mSlimRecents;
-    private Display mDisplay;
 
     private boolean mHasNavigationBar = false;
     private boolean mNavigationBarAttached = false;
@@ -61,15 +58,6 @@ public class SlimStatusBar extends PhoneStatusBar {
 
         void observe() {
             ContentResolver resolver = mContext.getContentResolver();
-            resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.USE_SLIM_RECENTS), false, this,
-                    UserHandle.USER_ALL);
-            resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.RECENT_CARD_BG_COLOR), false, this,
-                    UserHandle.USER_ALL);
-            resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.RECENT_CARD_TEXT_COLOR), false, this,
-                    UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.NAVIGATION_BAR_BUTTON_TINT),
                     false, this, UserHandle.USER_ALL);
@@ -88,12 +76,6 @@ public class SlimStatusBar extends PhoneStatusBar {
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.NAVIGATION_BAR_CAN_MOVE),
                     false, this, UserHandle.USER_ALL);
-            resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.MENU_LOCATION),
-                    false, this, UserHandle.USER_ALL);
-            resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.MENU_VISIBILITY),
-                    false, this, UserHandle.USER_ALL);
         }
 
         @Override
@@ -101,25 +83,13 @@ public class SlimStatusBar extends PhoneStatusBar {
             super.onChange(selfChange, uri);
 
             if (uri.equals(Settings.System.getUriFor(
-                    Settings.System.USE_SLIM_RECENTS))) {
-                updateRecents();
-            } else if (uri.equals(Settings.System.getUriFor(
-                    Settings.System.RECENT_CARD_BG_COLOR))
-                    || uri.equals(Settings.System.getUriFor(
-                    Settings.System.RECENT_CARD_TEXT_COLOR))) {
-                rebuildRecentsScreen();
-            } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.NAVIGATION_BAR_BUTTON_TINT))
                 || uri.equals(Settings.System.getUriFor(
                     Settings.System.NAVIGATION_BAR_BUTTON_TINT_MODE))
                 || uri.equals(Settings.System.getUriFor(
                     Settings.System.NAVIGATION_BAR_CONFIG))
                 || uri.equals(Settings.System.getUriFor(
-                    Settings.System.NAVIGATION_BAR_GLOW_TINT))
-                || uri.equals(Settings.System.getUriFor(
-                    Settings.System.MENU_LOCATION))
-                || uri.equals(Settings.System.getUriFor(
-                    Settings.System.MENU_VISIBILITY))) {
+                    Settings.System.NAVIGATION_BAR_GLOW_TINT))) {
                 if (mSlimNavigationBarView != null) {
                     mSlimNavigationBarView.recreateNavigationBar();
                     prepareNavigationBarView();
@@ -138,12 +108,7 @@ public class SlimStatusBar extends PhoneStatusBar {
     public void start() {
         super.start();
 
-        mDisplay = ((WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE))
-                .getDefaultDisplay();
-
         updateNavigationBarVisibility();
-
-        updateRecents();
 
         SettingsObserver observer = new SettingsObserver(mHandler);
         observer.observe();
@@ -152,13 +117,17 @@ public class SlimStatusBar extends PhoneStatusBar {
     @Override
     protected PhoneStatusBarView makeStatusBarView() {
         PhoneStatusBarView statusBarView = super.makeStatusBarView();
+        return mStatusBarView;
+    }
 
+    @Override
+    protected void createNavigationBarView(Context context) {
         if (mSlimNavigationBarView == null) {
             mSlimNavigationBarView = (SlimNavigationBarView)
                     View.inflate(mContext, R.layout.slim_navigation_bar, null);
         }
         mSlimNavigationBarView.setDisabledFlags(mDisabled1);
-        mSlimNavigationBarView.setBar(this);
+        //mSlimNavigationBarView.setBar(this);
         mSlimNavigationBarView.setOnVerticalChangedListener(
                 new NavigationBarView.OnVerticalChangedListener() {
             @Override
@@ -177,19 +146,9 @@ public class SlimStatusBar extends PhoneStatusBar {
             }
         });
 
-        if (!(mNavigationBarView instanceof SlimNavigationBarView) && mNavigationBarView != null) {
-            if (mNavigationBarView.isAttachedToWindow()) {
-                try {
-                    mWindowManager.removeView(mNavigationBarView);
-                } catch (Exception e) {}
-            }
-        }
-
         if (mNavigationBarView != mSlimNavigationBarView) {
             mNavigationBarView = mSlimNavigationBarView;
         }
-
-        return statusBarView;
     }
 
     private void updateNavigationBarVisibility() {
@@ -213,18 +172,7 @@ public class SlimStatusBar extends PhoneStatusBar {
     protected void prepareNavigationBarView() {
         mSlimNavigationBarView.reorient();
 
-        View home = mSlimNavigationBarView.getHomeButton();
-        View recents = mSlimNavigationBarView.getRecentsButton();
-
         mSlimNavigationBarView.setPinningCallback(mLongClickCallback);
-
-        /*if (recents != null) {
-            recents.setOnClickListener(mRecentsClickListener);
-            recents.setOnTouchListener(mRecentsPreloadOnTouchListener);
-        }
-        if (home != null) {
-            home.setOnTouchListener(mHomeActionListener);
-        }*/
 
         mAssistManager.onConfigurationChanged();
     }
@@ -232,7 +180,9 @@ public class SlimStatusBar extends PhoneStatusBar {
     @Override
     protected void addNavigationBar() {
         if (DEBUG) Log.v(TAG, "addNavigationBar: about to add " + mSlimNavigationBarView);
-        if (mSlimNavigationBarView == null) return;
+        if (mSlimNavigationBarView == null) {
+            createNavigationBarView(mContext);
+        }
 
         prepareNavigationBarView();
 
@@ -294,7 +244,7 @@ public class SlimStatusBar extends PhoneStatusBar {
                 // long-pressed 'together'
                 if (mSlimNavigationBarView.getRightMenuButton().isPressed()
                         && mSlimNavigationBarView.getLeftMenuButton().isPressed()) {
-                    activityManager.stopLockTaskModeOnCurrent();
+                    //activityManager.stopLockTaskModeOnCurrent();
                     // When exiting refresh disabled flags.
                     mSlimNavigationBarView.setDisabledFlags(mDisabled1, true);
                     mSlimNavigationBarView.setOverrideMenuKeys(false);
@@ -315,7 +265,7 @@ public class SlimStatusBar extends PhoneStatusBar {
                 } else if (isAccessiblityEnabled && activityManager.isInLockTaskMode()) {
                     // When in accessibility mode a long press that is recents (not back)
                     // should stop lock task.
-                    activityManager.stopLockTaskModeOnCurrent();
+                    //activityManager.stopLockTaskModeOnCurrent();
                     // When exiting refresh disabled flags.
                     mSlimNavigationBarView.setDisabledFlags(mDisabled1, true);
                     mSlimNavigationBarView.setOverrideMenuKeys(false);
@@ -326,71 +276,6 @@ public class SlimStatusBar extends PhoneStatusBar {
         } catch (RemoteException e) {
             Log.d(TAG, "Unable to reach activity manager", e);
             return false;
-        }
-    }
-
-    @Override
-    protected void hideRecents(boolean triggeredFromAltTab, boolean triggeredFromHomeKey) {
-        if (mSlimRecents != null) {
-            mSlimRecents.hideRecents(triggeredFromHomeKey);
-        } else {
-            super.hideRecents(triggeredFromAltTab, triggeredFromHomeKey);
-        }
-    }
-
-    @Override
-    protected void toggleRecents() {
-        if (mSlimRecents != null) {
-            sendCloseSystemWindows(mContext, SYSTEM_DIALOG_REASON_RECENT_APPS);
-            mSlimRecents.toggleRecents(mDisplay, mLayoutDirection, getStatusBarView());
-        } else {
-            super.toggleRecents();
-        }
-    }
-
-    @Override
-    protected void preloadRecents() {
-        if (mSlimRecents != null) {
-            mSlimRecents.preloadRecentTasksList();
-        } else {
-            super.preloadRecents();
-        }
-    }
-
-    @Override
-    protected void cancelPreloadingRecents() {
-        if (mSlimRecents != null) {
-            mSlimRecents.cancelPreloadingRecentTasksList();
-        } else {
-            super.cancelPreloadingRecents();
-        }
-    }
-
-    protected void rebuildRecentsScreen() {
-        if (mSlimRecents != null) {
-            mSlimRecents.rebuildRecentsScreen();
-        }
-    }
-
-    protected void updateRecents() {
-        boolean slimRecents = Settings.System.getIntForUser(mContext.getContentResolver(),
-                Settings.System.USE_SLIM_RECENTS, 1, UserHandle.USER_CURRENT) == 1;
-
-        if (slimRecents) {
-            mSlimRecents = new RecentController(mContext, mLayoutDirection);
-            mSlimRecents.setCallback(this);
-            rebuildRecentsScreen();
-        } else {
-            mSlimRecents = null;
-        }
-    }
-
-    private static void sendCloseSystemWindows(Context context, String reason) {
-        if (ActivityManagerNative.isSystemReady()) {
-            try {
-                ActivityManagerNative.getDefault().closeSystemDialogs(reason);
-            } catch (RemoteException e) {
-            }
         }
     }
 }
