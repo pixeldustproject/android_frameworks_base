@@ -93,7 +93,7 @@ public class NavigationBarView extends LinearLayout {
 
     private NavigationBarGestureHelper mGestureHelper;
     private DeadZone mDeadZone;
-    private final NavigationBarTransitions mBarTransitions;
+    protected final NavigationBarTransitions mBarTransitions;
 
     private boolean mSwapKeys;
 
@@ -342,7 +342,7 @@ public class NavigationBarView extends LinearLayout {
         mHomeCarModeIcon = ctx.getDrawable(R.drawable.ic_sysbar_home_carmode);
     }
 
-    private void updateIcons(Context ctx, Configuration oldConfig, Configuration newConfig) {
+    protected void updateIcons(Context ctx, Configuration oldConfig, Configuration newConfig) {
         if (oldConfig.orientation != newConfig.orientation
                 || oldConfig.densityDpi != newConfig.densityDpi) {
             mDockedIcon = ctx.getDrawable(R.drawable.ic_sysbar_docked);
