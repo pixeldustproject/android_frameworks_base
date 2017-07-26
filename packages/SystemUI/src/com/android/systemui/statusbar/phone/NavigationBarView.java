@@ -115,7 +115,7 @@ public class NavigationBarView extends LinearLayout {
     private boolean mInCarMode = false;
     private boolean mDockedStackExists;
 
-    private final SparseArray<ButtonDispatcher> mButtonDisatchers = new SparseArray<>();
+    private final SparseArray<ButtonDispatcher> mButtonDispatchers = new SparseArray<>();
     private Configuration mConfiguration;
     private GestureDetector mDoubleTapGesture;
     private SlideTouchEvent mSlideTouchEvent;
@@ -216,13 +216,13 @@ public class NavigationBarView extends LinearLayout {
 
         mBarTransitions = new NavigationBarTransitions(this);
 
-        mButtonDisatchers.put(R.id.back, new ButtonDispatcher(R.id.back));
-        mButtonDisatchers.put(R.id.home, new ButtonDispatcher(R.id.home));
-        mButtonDisatchers.put(R.id.recent_apps, new ButtonDispatcher(R.id.recent_apps));
-        mButtonDisatchers.put(R.id.menu, new ButtonDispatcher(R.id.menu));
-        mButtonDisatchers.put(R.id.menu_always_show, new ButtonDispatcher(R.id.menu_always_show));
-        mButtonDisatchers.put(R.id.search, new ButtonDispatcher(R.id.search));
-        mButtonDisatchers.put(R.id.ime_switcher, new ButtonDispatcher(R.id.ime_switcher));
+        mButtonDispatchers.put(R.id.back, new ButtonDispatcher(R.id.back));
+        mButtonDispatchers.put(R.id.home, new ButtonDispatcher(R.id.home));
+        mButtonDispatchers.put(R.id.recent_apps, new ButtonDispatcher(R.id.recent_apps));
+        mButtonDispatchers.put(R.id.menu, new ButtonDispatcher(R.id.menu));
+        mButtonDispatchers.put(R.id.menu_always_show, new ButtonDispatcher(R.id.menu_always_show));
+        mButtonDispatchers.put(R.id.search, new ButtonDispatcher(R.id.search));
+        mButtonDispatchers.put(R.id.ime_switcher, new ButtonDispatcher(R.id.ime_switcher));
 
         mDoubleTapGesture = new GestureDetector(mContext,
                 new GestureDetector.SimpleOnGestureListener() {
@@ -305,31 +305,31 @@ public class NavigationBarView extends LinearLayout {
     }
 
     public ButtonDispatcher getRecentsButton() {
-        return mButtonDisatchers.get(R.id.recent_apps);
+        return mButtonDispatchers.get(R.id.recent_apps);
     }
 
     public ButtonDispatcher getMenuButton() {
-        return mButtonDisatchers.get(R.id.menu);
+        return mButtonDispatchers.get(R.id.menu);
     }
 
     public ButtonDispatcher getMenuAlwaysShowButton() {
-        return mButtonDisatchers.get(R.id.menu_always_show);
+        return mButtonDispatchers.get(R.id.menu_always_show);
     }
 
     public ButtonDispatcher getBackButton() {
-        return mButtonDisatchers.get(R.id.back);
+        return mButtonDispatchers.get(R.id.back);
     }
 
     public ButtonDispatcher getHomeButton() {
-        return mButtonDisatchers.get(R.id.home);
+        return mButtonDispatchers.get(R.id.home);
     }
 
     public ButtonDispatcher getImeSwitchButton() {
-        return mButtonDisatchers.get(R.id.ime_switcher);
+        return mButtonDispatchers.get(R.id.ime_switcher);
     }
 
     public ButtonDispatcher getSearchButton() {
-        return mButtonDisatchers.get(R.id.search);
+        return mButtonDispatchers.get(R.id.search);
     }
 
     public ViewGroup getDpadView() { return (ViewGroup) getCurrentView().findViewById(R.id.dpad_group); }
@@ -556,7 +556,7 @@ public class NavigationBarView extends LinearLayout {
         mNavigationInflaterView = (NavigationBarInflaterView) findViewById(
                 R.id.navigation_inflater);
         updateRotatedViews();
-        mNavigationInflaterView.setButtonDispatchers(mButtonDisatchers);
+        mNavigationInflaterView.setButtonDispatchers(mButtonDispatchers);
 
         getImeSwitchButton().setOnClickListener(mImeSwitcherClickListener);
 
@@ -618,8 +618,8 @@ public class NavigationBarView extends LinearLayout {
         mCurrentView.setVisibility(View.VISIBLE);
         mNavigationInflaterView.setSwappedOrder(mSwapKeys);
         mNavigationInflaterView.setAlternativeOrder(rot == Surface.ROTATION_90 || rot == Surface.ROTATION_270);
-        for (int i = 0; i < mButtonDisatchers.size(); i++) {
-            mButtonDisatchers.valueAt(i).setCurrentView(mCurrentView);
+        for (int i = 0; i < mButtonDispatchers.size(); i++) {
+            mButtonDispatchers.valueAt(i).setCurrentView(mCurrentView);
         }
         updateLayoutTransitionsEnabled();
         mCurrentRotation = rot;
