@@ -26,6 +26,7 @@ import android.app.StatusBarManager;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuff.Mode;
@@ -37,6 +38,7 @@ import android.os.UserHandle;
 import android.provider.Settings;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.util.SparseArray;
 import android.util.TypedValue;
 import android.view.Display;
 import android.view.Gravity;
@@ -238,8 +240,8 @@ public class SlimNavigationBarView extends NavigationBarView {
 
     @Override
     public void updateIcons(Context ctx, Configuration oldConfig, Configuration newConfig) {
-        super.updateIcons(Context ctx, Configuration oldConfig, Configuration newConfig);
-        getIcons(getContext().getResources());
+        super.updateIcons(ctx, oldConfig, newConfig);
+        getIcons(ctx.getResources());
     }
 
     @Override
@@ -502,8 +504,8 @@ public class SlimNavigationBarView extends NavigationBarView {
         mNavigationIconHints = hints;
 
         if (getBackButton() != null ) {
-            ((ImageView) getBackButton()).setImageDrawable(null);
-            ((ImageView) getBackButton()).setImageDrawable(mVertical ? mBackLandIcon : mBackIcon);
+            ((ButtonDispatcher) getBackButton()).setImageDrawable(null);
+            ((ButtonDispatcher) getBackButton()).setImageDrawable(mVertical ? mBackLandIcon : mBackIcon);
         }
 
         final boolean showImeButton = ((hints & StatusBarManager.NAVIGATION_HINT_IME_SHOWN) != 0);
@@ -532,9 +534,9 @@ public class SlimNavigationBarView extends NavigationBarView {
                 (mDisabledFlags & View.STATUS_BAR_DISABLE_HOME) != 0;
 
 
-        if (SLIPPERY_WHEN_DISABLED) {
+        /*if (SLIPPERY_WHEN_DISABLED) {
             setSlippery(disableHome && disableRecent && disableBack);
-        }
+        }*/
 
         final ViewGroup navButtons = getNavButtons();
         if (navButtons != null) {
@@ -578,9 +580,9 @@ public class SlimNavigationBarView extends NavigationBarView {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (mTaskSwitchHelper.onTouchEvent(event)) {
+        /*if (mTaskSwitchHelper.onTouchEvent(event)) {
             return true;
-        }
+        }*/
         if (mDeadZone != null && event.getAction() == MotionEvent.ACTION_OUTSIDE) {
             mDeadZone.poke(event);
         }
@@ -604,11 +606,11 @@ public class SlimNavigationBarView extends NavigationBarView {
         }
     }
 
-    @Override
+    /*@Override
     public void setSlippery(boolean newSlippery) {
         if (!isAttachedToWindow()) return;
         super.setSlippery(newSlippery);
-    }
+    }*/
 
     @Override
     public void setMenuVisibility(final boolean show, final boolean force) {
@@ -655,7 +657,7 @@ public class SlimNavigationBarView extends NavigationBarView {
         if (getImeSwitchButton() != null)
             getImeSwitchButton().setOnClickListener(mImeSwitcherClickListener);
 
-        updateRTLOrder();
+        //updateRTLOrder();
     }
 
     public void reorient() {
@@ -695,29 +697,31 @@ public class SlimNavigationBarView extends NavigationBarView {
 
     private void updateTaskSwitchHelper() {
         boolean isRtl = (getLayoutDirection() == View.LAYOUT_DIRECTION_RTL);
-        mTaskSwitchHelper.setBarState(mVertical, isRtl);
+        //mTaskSwitchHelper.setBarState(mVertical, isRtl);
     }
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         super.onLayout(changed, l, t, r, b);
-        List<View> views = new ArrayList<View>();
-        final View back = getBackButton();
-        final View home = getHomeButton();
-        final View recent = getRecentsButton();
+        SparseArray<ButtonDispatcher> buttonDispatcher = new SparseArray<>();
+        final ButtonDispatcher back = getBackButton();
+        final ButtonDispatcher home = getHomeButton();
+        final ButtonDispatcher recent = getRecentsButton();
         if (back != null) {
-            views.add(back);
+            buttonDispatcher.put(R.id.back, back);
         }
         if (home != null) {
-            views.add(home);
+            buttonDispatcher.put(R.id.home, home);
         }
         if (recent != null) {
-            views.add(recent);
+            buttonDispatcher.put(R.id.recent_apps, recent);
         }
         for (int i = 0; i < mButtonIdList.size(); i++) {
             final View customButton = getCustomButton(mButtonIdList.get(i));
+            final ButtonDispatcher btnDispatcher = new ButtonDispatcher(i);
+            btnDispatcher.addView(customButton);
             if (customButton != null) {
-                views.add(customButton);
+                buttonDispatcher.put(i, btnDispatcher);
             }
         }
     }
