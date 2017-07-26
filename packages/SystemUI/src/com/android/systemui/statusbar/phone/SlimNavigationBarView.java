@@ -237,7 +237,8 @@ public class SlimNavigationBarView extends NavigationBarView {
     }
 
     @Override
-    public void updateResources() {
+    public void updateIcons(Context ctx, Configuration oldConfig, Configuration newConfig) {
+        super.updateIcons(Context ctx, Configuration oldConfig, Configuration newConfig);
         getIcons(getContext().getResources());
     }
 

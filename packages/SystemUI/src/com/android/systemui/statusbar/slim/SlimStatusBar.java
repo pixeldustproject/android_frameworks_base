@@ -76,6 +76,12 @@ public class SlimStatusBar extends PhoneStatusBar {
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.NAVIGATION_BAR_CAN_MOVE),
                     false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.MENU_LOCATION),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.MENU_VISIBILITY),
+                    false, this, UserHandle.USER_ALL);
         }
 
         @Override
@@ -89,7 +95,11 @@ public class SlimStatusBar extends PhoneStatusBar {
                 || uri.equals(Settings.System.getUriFor(
                     Settings.System.NAVIGATION_BAR_CONFIG))
                 || uri.equals(Settings.System.getUriFor(
-                    Settings.System.NAVIGATION_BAR_GLOW_TINT))) {
+                    Settings.System.NAVIGATION_BAR_GLOW_TINT))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.MENU_LOCATION))
+                || uri.equals(Settings.System.getUriFor(
+                    Settings.System.MENU_VISIBILITY))) {
                 if (mSlimNavigationBarView != null) {
                     mSlimNavigationBarView.recreateNavigationBar();
                     prepareNavigationBarView();

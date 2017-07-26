@@ -49,15 +49,14 @@ import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.ImageView;
 
-import com.android.internal.statusbar.IStatusBarService;
-
+import com.android.internal.util.aicp.ActionConstants;
+import com.android.internal.util.aicp.Action;
+import com.android.server.LocalServices;
 import com.android.systemui.R;
+import com.android.systemui.statusbar.slim.ISlimStatusBar;
 import com.android.systemui.statusbar.policy.KeyButtonView;
 
 import java.util.ArrayList;
-
-import com.android.internal.util.aicp.ActionConstants;
-import com.android.internal.util.aicp.Action;
 
 import static android.view.accessibility.AccessibilityNodeInfo.ACTION_CLICK;
 import static android.view.accessibility.AccessibilityNodeInfo.ACTION_LONG_CLICK;
@@ -79,7 +78,7 @@ public class SlimKeyButtonView extends KeyButtonView {
     private SlimKeyButtonRipple mRipple;
     private LongClickCallback mCallback;
 
-    private IStatusBarService mStatusBar;
+    private ISlimStatusBar mStatusBar;
 
     private final Runnable mCheckLongPress = new Runnable() {
         public void run() {
@@ -125,7 +124,7 @@ public class SlimKeyButtonView extends KeyButtonView {
 
         a.recycle();
 
-        mStatusBar = IStatusBarService.Stub.asInterface(
+        mStatusBar = ISlimStatusBar.Stub.asInterface(
                 ServiceManager.getService(Context.STATUS_BAR_SERVICE));
 
         setClickable(true);
