@@ -69,7 +69,7 @@ oneway interface IStatusBar
     void dismissKeyboardShortcutsMenu();
     void toggleKeyboardShortcutsMenu(int deviceId);
 
-    void showCustomIntentAfterKeyguard(inout Intent intent);
+    void showCustomIntentAfterKeyguard(in Intent intent);
 
     /**
      * Notifies the status bar that an app transition is pending to delay applying some flags with

@@ -69,7 +69,7 @@ interface IStatusBarService
     void clickTile(in ComponentName tile);
     void handleSystemNavigationKey(in int key);
     void setAutoRotate(boolean enabled);
-    void showCustomIntentAfterKeyguard(inout Intent intent);
+    void showCustomIntentAfterKeyguard(in Intent intent);
 
     // SystemUI Restart API for masquerade
     void restartUI();
