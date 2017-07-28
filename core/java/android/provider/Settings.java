@@ -3848,12 +3848,6 @@ public final class Settings {
          */
 
         /**
-         * Show onscreen keys for hw button devices
-         * @hide
-         */
-        public static final String NAVIGATION_BAR_SHOW = "navigation_bar_show";
-
-        /**
          * Dynamic Navbar Switch
          * @hide
          */
