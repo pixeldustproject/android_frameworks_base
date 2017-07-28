@@ -31,9 +31,19 @@ public class OmniSwitchConstants {
     public static final String APP_PACKAGE_NAME = "org.omnirom.omniswitch";
 
     /**
+     * Intent broadcast action for showing the omniswitch overlay
+     */
+    public static final String ACTION_SHOW_OVERLAY = APP_PACKAGE_NAME + ".ACTION_SHOW_OVERLAY";
+
+    /**
+     * Intent broadcast action for hiding the omniswitch overlay
+     */
+    public static final String ACTION_HIDE_OVERLAY = APP_PACKAGE_NAME + ".ACTION_HIDE_OVERLAY";
+
+    /**
      * Intent broadcast action for toogle the omniswitch overlay
      */
-    private static final String ACTION_TOGGLE_OVERLAY = APP_PACKAGE_NAME + ".ACTION_TOGGLE_OVERLAY";
+    public static final String ACTION_TOGGLE_OVERLAY = APP_PACKAGE_NAME + ".ACTION_TOGGLE_OVERLAY";
 
     /**
      * @hide
