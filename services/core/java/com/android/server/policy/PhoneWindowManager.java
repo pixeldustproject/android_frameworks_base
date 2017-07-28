@@ -502,7 +502,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     int mLongPressOnPowerBehavior;
     int mDoublePressOnPowerBehavior;
     int mTriplePressOnPowerBehavior;
-    int mLongPressOnBackBehavior;
     int mPanicPressOnBackBehavior;
     int mShortPressOnSleepBehavior;
     int mShortPressWindowBehavior;
@@ -903,8 +902,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     showTvPictureInPictureMenuInternal();
                     break;
                 case MSG_BACK_LONG_PRESS:
-                    backLongPress();
-                    finishBackKeyPress();
+                    //Do nothing
                     break;
                 case MSG_DISPOSE_INPUT_CONSUMER:
                     disposeInputConsumer((InputConsumer) msg.obj);
@@ -1260,13 +1258,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     && mBackKeyPressCounter < PANIC_PRESS_BACK_COUNT) {
                 mHandler.removeMessages(MSG_BACK_DELAYED_PRESS);
             }
-        }
-
-        if (hasLongPressOnBackBehavior()) {
-            Message msg = mHandler.obtainMessage(MSG_BACK_LONG_PRESS);
-            msg.setAsynchronous(true);
-            mHandler.sendMessageDelayed(msg,
-                    ViewConfiguration.get(mContext).getDeviceGlobalActionKeyTimeout());
         }
     }
 
@@ -1635,24 +1626,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         }
     }
 
-    private void backLongPress() {
-        mBackKeyHandled = true;
-
-        switch (mLongPressOnBackBehavior) {
-            case LONG_PRESS_BACK_NOTHING:
-                break;
-            case LONG_PRESS_BACK_GO_TO_VOICE_ASSIST:
-                final boolean keyguardActive = mKeyguardDelegate == null
-                        ? false
-                        : mKeyguardDelegate.isShowing();
-                if (!keyguardActive) {
-                    Intent intent = new Intent(Intent.ACTION_VOICE_ASSIST);
-                    startActivityAsUser(intent, UserHandle.CURRENT_OR_SELF);
-                }
-                break;
-        }
-    }
-
     private void disposeInputConsumer(InputConsumer inputConsumer) {
         if (inputConsumer != null) {
             inputConsumer.dismiss();
@@ -1685,10 +1658,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
 
     private boolean hasLongPressOnPowerBehavior() {
         return getResolvedLongPressOnPowerBehavior() != LONG_PRESS_POWER_NOTHING;
-    }
-
-    private boolean hasLongPressOnBackBehavior() {
-        return mLongPressOnBackBehavior != LONG_PRESS_BACK_NOTHING;
     }
 
     private boolean hasPanicPressOnBackBehavior() {
@@ -1776,18 +1745,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         @Override
         public void run() {
             takeScreenrecord();
-        }
-    };
-
-    Runnable mBackLongPress = new Runnable() {
-        public void run() {
-            if (ActionUtils.killForegroundApplication(mContext)) {
-                performHapticFeedbackLw(null, HapticFeedbackConstants.LONG_PRESS, false);
-            }
-            Toast.makeText(mContext, killResult == null
-                ? mContext.getString(R.string.no_app_killed_message)
-                : String.format(Locale.getDefault(), mContext.getString(R.string.app_killed_message),
-                    killResult), Toast.LENGTH_SHORT).show();
         }
     };
 
@@ -2099,8 +2056,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         mSupportLongPressPowerWhenNonInteractive = mContext.getResources().getBoolean(
                 com.android.internal.R.bool.config_supportLongPressPowerWhenNonInteractive);
 
-        mLongPressOnBackBehavior = mContext.getResources().getInteger(
-                com.android.internal.R.integer.config_longPressOnBackBehavior);
         mPanicPressOnBackBehavior = mContext.getResources().getInteger(
                 com.android.internal.R.integer.config_backPanicBehavior);
 
@@ -2530,51 +2485,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             mHasNavigationBar = Settings.System.getIntForUser(resolver,
                     Settings.System.NAVIGATION_BAR_SHOW, showByDefault,
                     UserHandle.USER_CURRENT) == 1;
-
-            if (!mHasNavigationBar) {
-                // Set the navigation bar's dimensions to 0 in expanded desktop mode
-                mNavigationBarWidthForRotation[mPortraitRotation]
-                        = mNavigationBarWidthForRotation[mUpsideDownRotation]
-                        = mNavigationBarWidthForRotation[mLandscapeRotation]
-                        = mNavigationBarWidthForRotation[mSeascapeRotation]
-                        = mNavigationBarHeightForRotation[mPortraitRotation]
-                        = mNavigationBarHeightForRotation[mUpsideDownRotation]
-                        = mNavigationBarHeightForRotation[mLandscapeRotation]
-                        = mNavigationBarHeightForRotation[mSeascapeRotation] = 0;
-            } else {
-                // Height of the navigation bar when presented horizontally at bottom *******
-                mNavigationBarHeightForRotation[mPortraitRotation] =
-                mNavigationBarHeightForRotation[mUpsideDownRotation] =
-                    Settings.System.getIntForUser(
-                        mContext.getContentResolver(),
-                        Settings.System.NAVIGATION_BAR_HEIGHT,
-                        mContext.getResources()
-                                .getDimensionPixelSize(
-                                    com.android.internal.R.dimen.navigation_bar_height),
-                        UserHandle.USER_CURRENT);
-                mNavigationBarHeightForRotation[mLandscapeRotation] =
-                mNavigationBarHeightForRotation[mSeascapeRotation] =
-                    Settings.System.getIntForUser(
-                        mContext.getContentResolver(),
-                        Settings.System.NAVIGATION_BAR_HEIGHT_LANDSCAPE,
-                        mContext.getResources()
-                                .getDimensionPixelSize(
-                                    com.android.internal.R.dimen.navigation_bar_height_landscape),
-                        UserHandle.USER_CURRENT);
-
-                // Width of the navigation bar when presented vertically along one side
-                mNavigationBarWidthForRotation[mPortraitRotation] =
-                mNavigationBarWidthForRotation[mUpsideDownRotation] =
-                mNavigationBarWidthForRotation[mLandscapeRotation] =
-                mNavigationBarWidthForRotation[mSeascapeRotation] =
-                    Settings.System.getIntForUser(
-                        mContext.getContentResolver(),
-                        Settings.System.NAVIGATION_BAR_WIDTH,
-                        mContext.getResources()
-                                .getDimensionPixelSize(
-                                    com.android.internal.R.dimen.navigation_bar_width),
-                        UserHandle.USER_CURRENT);
-            }
 
             if (mSystemReady) {
                 int pointerLocation = Settings.System.getIntForUser(resolver,
@@ -3755,10 +3665,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             mPendingCapsLockToggle = false;
         }
 
-        if (keyCode == KeyEvent.KEYCODE_BACK && !down) {
-            mHandler.removeCallbacks(mBackLongPress);
-        }
-
         // First we always handle the home key here, so applications
         // can never break it, although if keyguard is on, we do let
         // it handle it, because that gives us the correct 5 second
@@ -4265,12 +4171,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             }
             return -1;
         } else if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if (Settings.Secure.getIntForUser(mContext.getContentResolver(),
-                    Settings.Secure.KILL_APP_LONGPRESS_BACK, 1, UserHandle.USER_CURRENT) == 1) {
-                if (down && repeatCount == 0) {
-                    mHandler.postDelayed(mBackLongPress, mBackKillTimeout);
-                }
-            }
+            //Do nothing
         } else if (keyCode == KeyEvent.KEYCODE_BRIGHTNESS_UP
                 || keyCode == KeyEvent.KEYCODE_BRIGHTNESS_DOWN) {
             if (down) {
