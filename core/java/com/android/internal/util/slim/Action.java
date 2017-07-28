@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2014 SlimRoms Project
+* Copyright (C) 2016-2017 SlimRoms Project
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -23,11 +23,15 @@ import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.hardware.camera2.CameraManager;
+import android.hardware.camera2.CameraCharacteristics;
+import android.hardware.camera2.CameraAccessException;
 import android.hardware.input.InputManager;
 import android.media.AudioManager;
 import android.media.session.MediaSessionLegacyHelper;
 import android.media.ToneGenerator;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.PowerManager;
 import android.os.RemoteException;
 import android.os.ServiceManager;
@@ -42,7 +46,6 @@ import android.view.IWindowManager;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
 import android.view.WindowManagerGlobal;
-import android.view.WindowManagerPolicyControl;
 
 import com.android.internal.statusbar.IStatusBarService;
 
@@ -53,11 +56,9 @@ public class Action {
     private static final int MSG_INJECT_KEY_DOWN = 1066;
     private static final int MSG_INJECT_KEY_UP = 1067;
 
-    private static final int STATE_ENABLE_FOR_ALL = 1;
-    private static final int STATE_USER_CONFIGURABLE = 2;
-    private static int mExpandedDesktopState;
-
     private static Context mContext;
+
+    private static boolean sTorchEnabled = false;
 
     public static void processAction(Context context, String action, boolean isLongpress) {
         processActionWithOptions(context, action, isLongpress, true);
@@ -67,7 +68,6 @@ public class Action {
             String action, boolean isLongpress, boolean collapseShade) {
 
             mContext = context;
-            mExpandedDesktopState = getExpandedDesktopState(mContext.getContentResolver());
 
             if (action == null || action.equals(ActionConstants.ACTION_NULL)) {
                 return;
@@ -87,6 +87,7 @@ public class Action {
                 return; // ouch
             }
 
+
             final IWindowManager windowManagerService = IWindowManager.Stub.asInterface(
                     ServiceManager.getService(Context.WINDOW_SERVICE));
            if (windowManagerService == null) {
@@ -98,7 +99,7 @@ public class Action {
                 isKeyguardSecure = windowManagerService.isKeyguardSecure();
             } catch (RemoteException e) {
             }
-
+            
             // process the actions
             if (action.equals(ActionConstants.ACTION_HOME)) {
                 triggerVirtualKeypress(KeyEvent.KEYCODE_HOME, isLongpress);
@@ -109,23 +110,6 @@ public class Action {
             } else if (action.equals(ActionConstants.ACTION_SEARCH)) {
                 triggerVirtualKeypress(KeyEvent.KEYCODE_SEARCH, isLongpress);
                 return;
-            } else if (action.equals(ActionConstants.ACTION_EXPANDED_DESKTOP)) {
-                int state = mExpandedDesktopState;
-                switch (state) {
-                    case STATE_ENABLE_FOR_ALL:
-                        userConfigurableSettings();
-                        break;
-                    case STATE_USER_CONFIGURABLE:
-                        enableForAll();
-                        break;
-                }
-                return;
-            } else if (action.equals(ActionConstants.ACTION_KILL)) {
-                if (isKeyguardShowing) return;
-                try {
-                    barService.toggleKillApp();
-                } catch (RemoteException e) {}
-                return;
             } else if (action.equals(ActionConstants.ACTION_NOTIFICATIONS)) {
                 if (isKeyguardShowing && isKeyguardSecure) {
                     return;
@@ -135,26 +119,20 @@ public class Action {
                 } catch (RemoteException e) {
                 }
                 return;
-            } else if (action.equals(ActionConstants.ACTION_SETTINGS_PANEL)) {
-                if (isKeyguardShowing && isKeyguardSecure) {
-                    return;
-                }
+            } else if (action.equals(ActionConstants.ACTION_TORCH)) {
                 try {
-                    barService.expandSettingsPanel();
-                } catch (RemoteException e) {}
-            } else if (action.equals(ActionConstants.ACTION_LAST_APP)) {
-                if (isKeyguardShowing) {
-                    return;
-                }
-                try {
-                    barService.toggleLastApp();
-                } catch (RemoteException e) {
-                }
-                return;
-            } else if (action.equals(ActionConstants.ACTION_POWER_MENU)) {
-                try {
-                    windowManagerService.toggleGlobalMenu();
-                } catch (RemoteException e) {
+                    CameraManager cameraManager = (CameraManager)
+                            context.getSystemService(Context.CAMERA_SERVICE);
+                    for (final String cameraId : cameraManager.getCameraIdList()) {
+                        CameraCharacteristics characteristics =
+                            cameraManager.getCameraCharacteristics(cameraId);
+                        int orient = characteristics.get(CameraCharacteristics.LENS_FACING);
+                        if (orient == CameraCharacteristics.LENS_FACING_BACK) {
+                            cameraManager.setTorchMode(cameraId, !sTorchEnabled);
+                            sTorchEnabled = !sTorchEnabled;
+                        }
+                    }
+                } catch (CameraAccessException e) {
                 }
                 return;
             } else if (action.equals(ActionConstants.ACTION_MENU)
@@ -205,16 +183,7 @@ public class Action {
                 return;
             } else if (action.equals(ActionConstants.ACTION_SCREENSHOT)) {
                 try {
-                    barService.toggleScreenshot();
-                } catch (RemoteException e) {
-                }
-                return;
-            } else if (action.equals(ActionConstants.ACTION_RECENTS)) {
-                if (isKeyguardShowing) {
-                    return;
-                }
-                try {
-                    barService.toggleRecentApps();
+                barService.toggleScreenshot();
                 } catch (RemoteException e) {
                 }
                 return;
@@ -296,8 +265,13 @@ public class Action {
             } else if (action.equals(ActionConstants.ACTION_CAMERA)) {
                 // ToDo: Send for secure keyguard secure camera intent.
                 // We need to add support for it first.
-                Intent intent = new Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA, null);
-                startActivity(context, intent, barService, isKeyguardShowing);
+                Intent intent;
+                if (isKeyguardSecure) {
+                    intent = new Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA_SECURE, null);
+                } else {
+                    intent = new Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA, null);
+                }
+                startActivity(context, intent, barService, false);
                 return;
             } else if (action.equals(ActionConstants.ACTION_MEDIA_PREVIOUS)) {
                 dispatchMediaKeyWithWakeLock(KeyEvent.KEYCODE_MEDIA_PREVIOUS, context);
@@ -311,7 +285,7 @@ public class Action {
             } else if (action.equals(ActionConstants.ACTION_WAKE_DEVICE)) {
                 PowerManager powerManager =
                         (PowerManager) context.getSystemService(Context.POWER_SERVICE);
-                if (!powerManager.isScreenOn()) {
+                if (!powerManager.isInteractive()) {
                     powerManager.wakeUp(SystemClock.uptimeMillis());
                 }
                 return;
@@ -340,7 +314,6 @@ public class Action {
                 || action.equals(ActionConstants.ACTION_BACK)
                 || action.equals(ActionConstants.ACTION_SEARCH)
                 || action.equals(ActionConstants.ACTION_MENU)
-                || action.equals(ActionConstants.ACTION_MENU_BIG)
                 || action.equals(ActionConstants.ACTION_NULL)) {
             return true;
         }
@@ -414,41 +387,4 @@ public class Action {
                 InputDevice.SOURCE_KEYBOARD);
         im.injectInputEvent(upEvent, InputManager.INJECT_INPUT_EVENT_MODE_ASYNC);
     }
-
-    private static int getExpandedDesktopState(ContentResolver cr) {
-        String value = Settings.Global.getString(cr, Settings.Global.POLICY_CONTROL);
-        if ("immersive.full=*".equals(value)) {
-            return STATE_ENABLE_FOR_ALL;
-        }
-        return STATE_USER_CONFIGURABLE;
-    }
-
-    protected static void toggleState() {
-        int state = mExpandedDesktopState;
-        switch (state) {
-            case STATE_ENABLE_FOR_ALL:
-                userConfigurableSettings();
-                break;
-            case STATE_USER_CONFIGURABLE:
-                enableForAll();
-                break;
-        }
-    }
-
-    private static void userConfigurableSettings() {
-        mExpandedDesktopState = STATE_USER_CONFIGURABLE;
-        writeValue("");
-        WindowManagerPolicyControl.reloadFromSetting(mContext);
-    }
-
-    private static  void enableForAll() {
-        mExpandedDesktopState = STATE_ENABLE_FOR_ALL;
-        writeValue("immersive.full=*");
-    }
-
-    private static void writeValue(String value) {
-        Settings.Global.putString(mContext.getContentResolver(),
-             Settings.Global.POLICY_CONTROL, value);
-    }
-
 }
