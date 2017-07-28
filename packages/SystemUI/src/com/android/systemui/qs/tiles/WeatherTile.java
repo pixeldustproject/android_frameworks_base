@@ -30,7 +30,7 @@ import android.view.ViewGroup;
 
 import com.android.internal.logging.MetricsLogger;
 import com.android.internal.logging.MetricsProto.MetricsEvent;
-import com.android.internal.util.pixeldust.ActionUtils;
+import com.android.internal.util.omni.ActionUtils;
 import com.android.systemui.R;
 import com.android.systemui.omni.DetailedWeatherView;
 import com.android.systemui.omni.OmniJawsClient;
