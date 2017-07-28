@@ -1068,7 +1068,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         }
 
         mNavigationBarView.setDisabledFlags(mDisabled1);
-        mNavigationBarView.setBar(this);
+        //mNavigationBarView.setBar(this);
         mNavigationBarView.setOnVerticalChangedListener(
                 new NavigationBarView.OnVerticalChangedListener() {
             @Override
@@ -1716,7 +1716,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         public void onStartLockTask() {
             mNavigationBarView.setOverrideMenuKeys(true);
         }
-    }
+    };
 
     private final View.OnLongClickListener mLongPressHomeListener
             = new View.OnLongClickListener() {
