@@ -186,10 +186,6 @@ public class KeyButtonView extends ImageView implements ButtonDispatcher.ButtonI
         }
     }
 
-    public void setCode(int code) {
-        mCode = code;
-    }
-
     public void setClickAction(String action) {
         mClickAction = action;
         setOnClickListener(mClickListener);
