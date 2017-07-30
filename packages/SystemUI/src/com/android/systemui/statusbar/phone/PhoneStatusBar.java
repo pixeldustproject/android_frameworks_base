@@ -144,6 +144,7 @@ import com.android.keyguard.KeyguardHostView.OnDismissAction;
 import com.android.keyguard.KeyguardUpdateMonitor;
 import com.android.keyguard.KeyguardUpdateMonitorCallback;
 import com.android.keyguard.ViewMediatorCallback;
+import com.android.systemui.assist.AssistManager;
 import com.android.systemui.AutoReinflateContainer;
 import com.android.systemui.AutoReinflateContainer.InflateListener;
 import com.android.systemui.BatteryLevelTextView;
@@ -5560,7 +5561,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     activityManager.stopLockTaskMode();
                     // When exiting refresh disabled flags.
                     mNavigationBarView.setDisabledFlags(mDisabled1, true);
-                    return true;
                     mNavigationBarView.setOverrideMenuKeys(false);
                 } else if ((v.getId() == mNavigationBarView.getLeftMenuButton().getId())
                         && !mNavigationBarView.getRightMenuButton().isPressed()) {
@@ -5592,7 +5592,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             return sendBackLongPress;
         } catch (RemoteException e) {
             Log.d(TAG, "Unable to reach activity manager", e);
-            return false;
         }
         return false;
     }
