@@ -315,7 +315,7 @@ public class KeyButtonView extends ImageView implements ButtonDispatcher.ButtonI
         public boolean onLongClick(View v) {
             boolean b = true;
             if (mCallback != null) {
-                if (!mCallback.onLongClick(v)) {
+                if (mCallback.onLongClick(v)) {
                     b = false;
                 }
             }
