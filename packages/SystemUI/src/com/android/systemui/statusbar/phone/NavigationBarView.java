@@ -28,6 +28,7 @@ import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuff.Mode;
@@ -72,6 +73,7 @@ import com.android.systemui.R;
 import com.android.systemui.RecentsComponent;
 import com.android.systemui.stackdivider.Divider;
 import com.android.systemui.statusbar.policy.DeadZone;
+import com.android.systemui.statusbar.policy.KeyButtonView;
 import com.android.systemui.singlehandmode.SlideTouchEvent;
 
 import java.io.FileDescriptor;
@@ -283,7 +285,7 @@ public class NavigationBarView extends LinearLayout {
         mButtonsConfig = ActionHelper.getNavBarConfig(mContext);
         mButtonIdList = new ArrayList<Integer>();
 
-        getIcons(res);
+        getIcons(getContext().getResources());
     }
 
     public BarTransitions getBarTransitions() {
@@ -371,11 +373,11 @@ public class NavigationBarView extends LinearLayout {
         return mButtonDisatchers.get(R.id.home);
     }
 
-    public View getLeftMenuButton() {
+    public ButtonDispatcher getLeftMenuButton() {
         return mButtonDisatchers.get(R.id.menu_left);
     }
 
-    public View getRightMenuButton() {
+    public ButtonDispatcher getRightMenuButton() {
         return mButtonDisatchers.get(R.id.menu);
     }
 
@@ -397,6 +399,23 @@ public class NavigationBarView extends LinearLayout {
         mBackAltCarModeIcon = ctx.getDrawable(R.drawable.ic_sysbar_back_ime_carmode);
         mBackAltLandCarModeIcon = mBackAltCarModeIcon;
         mHomeCarModeIcon = ctx.getDrawable(R.drawable.ic_sysbar_home_carmode);
+    }
+
+    private void updateIcons(Context ctx, Configuration oldConfig, Configuration newConfig) {
+        if (oldConfig.orientation != newConfig.orientation
+                || oldConfig.densityDpi != newConfig.densityDpi) {
+            mDockedIcon = ctx.getDrawable(R.drawable.ic_sysbar_docked);
+        }
+        if (oldConfig.densityDpi != newConfig.densityDpi) {
+            mBackIcon = ctx.getDrawable(R.drawable.ic_sysbar_back);
+            mBackLandIcon = mBackIcon;
+            mBackAltIcon = ctx.getDrawable(R.drawable.ic_sysbar_back_ime);
+            mBackAltLandIcon = mBackAltIcon;
+            mHomeDefaultIcon = ctx.getDrawable(R.drawable.ic_sysbar_home);
+            mRecentIcon = ctx.getDrawable(R.drawable.ic_sysbar_recent);
+            mMenuIcon = ctx.getDrawable(R.drawable.ic_sysbar_menu);
+            mImeIcon = ctx.getDrawable(R.drawable.ic_ime_switcher_default);
+        }
     }
 
     public ViewGroup getNavButtons() {
@@ -724,8 +743,8 @@ public class NavigationBarView extends LinearLayout {
         mNavigationIconHints = hints;
 
         if (getBackButton() != null ) {
-            ((ImageView) getBackButton()).setImageDrawable(null);
-            ((ImageView) getBackButton()).setImageDrawable(mVertical ? mBackLandIcon : mBackIcon);
+            ((ButtonDispatcher) getBackButton()).setImageDrawable(null);
+            ((ButtonDispatcher) getBackButton()).setImageDrawable(mVertical ? mBackLandIcon : mBackIcon);
         }
         mBackLandIcon.setImeVisible(backAlt);
         mBackIcon.setImeVisible(backAlt);
@@ -983,23 +1002,25 @@ public class NavigationBarView extends LinearLayout {
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         super.onLayout(changed, l, t, r, b);
-        List<View> views = new ArrayList<View>();
-        final View back = getBackButton();
-        final View home = getHomeButton();
-        final View recent = getRecentsButton();
+        SparseArray<ButtonDispatcher> buttonDispatcher = new SparseArray<>();
+        final ButtonDispatcher back = getBackButton();
+        final ButtonDispatcher home = getHomeButton();
+        final ButtonDispatcher recent = getRecentsButton();
         if (back != null) {
-            views.add(back);
+            buttonDispatcher.put(R.id.back, back);
         }
         if (home != null) {
-            views.add(home);
+            buttonDispatcher.put(R.id.home, home);
         }
         if (recent != null) {
-            views.add(recent);
+            buttonDispatcher.put(R.id.recent_apps, recent);
         }
         for (int i = 0; i < mButtonIdList.size(); i++) {
             final View customButton = getCustomButton(mButtonIdList.get(i));
+            final ButtonDispatcher btnDispatcher = new ButtonDispatcher(i);
+            btnDispatcher.addView(customButton);
             if (customButton != null) {
-                views.add(customButton);
+                buttonDispatcher.put(i, btnDispatcher);
             }
         }
     }
