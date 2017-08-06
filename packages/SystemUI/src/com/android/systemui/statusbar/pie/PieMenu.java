@@ -22,6 +22,7 @@ import android.animation.ValueAnimator;
 import android.app.ActivityManagerNative;
 import android.app.Notification;
 import android.app.PendingIntent;
+import android.app.UiModeManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -92,7 +93,7 @@ import java.util.Locale;
  */
 public class PieMenu extends RelativeLayout {
     private static final String TAG = PieMenu.class.getSimpleName();
-    private static final boolean DEBUG = false;
+    private static final boolean DEBUG = true;
 
     private static final String FONT_FAMILY_LIGHT = "sans-serif-light";
     private static final String FONT_FAMILY_MEDIUM = "sans-serif-medium";
@@ -372,9 +373,13 @@ public class PieMenu extends RelativeLayout {
         int themeMode = Settings.Secure.getInt(mContext.getContentResolver(),
                 Settings.Secure.PIE_THEME_MODE, 0);
         if (themeMode == 0) {
-            int primaryTheme = Settings.Secure.getInt(mContext.getContentResolver(),
-                    Settings.Secure.THEME_PRIMARY_COLOR, 2);
-            mDarkThemeEnabled = primaryTheme == 1 || primaryTheme == 3;
+            final UiModeManager uiManager = (UiModeManager) mContext.getSystemService(
+                    Context.UI_MODE_SERVICE);
+            int primaryTheme = uiManager.getNightMode();
+            if (DEBUG) {
+                Log.d(TAG, "primaryTheme: " + Integer.toString(primaryTheme));
+            }
+            mDarkThemeEnabled = primaryTheme == 2;
         } else {
             mDarkThemeEnabled = themeMode == 2;
         }
