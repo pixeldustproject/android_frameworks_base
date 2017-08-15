@@ -93,7 +93,7 @@ import java.util.Locale;
  */
 public class PieMenu extends RelativeLayout {
     private static final String TAG = PieMenu.class.getSimpleName();
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
 
     private static final String FONT_FAMILY_LIGHT = "sans-serif-light";
     private static final String FONT_FAMILY_MEDIUM = "sans-serif-medium";
