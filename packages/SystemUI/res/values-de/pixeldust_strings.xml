@@ -93,4 +93,45 @@
     <!-- Typing virtual buttons -->
     <string name="accessibility_dpad_left">Cursor links</string>
     <string name="accessibility_dpad_right">Cursor rechts</string>
+
+    <!-- OnTheSpot: Action denial button text. [CHAR LIMIT=NONE] -->
+    <string name="on_the_spot_deny">NEIN DANKE</string>
+    <!-- OnTheSpot: Action confirmation button text. [CHAR LIMIT=NONE] -->
+    <string name="on_the_spot_confirm">OKAY</string>
+
+    <!-- Content description of the immersive mode tile -->
+    <string name="accessibility_quick_settings_immersive_mode_off">Immersive Mode aus</string>
+    <string name="accessibility_quick_settings_immersive_mode_full">Immersive Mode Vollbild</string>
+    <string name="accessibility_quick_settings_immersive_mode_hide_status_bar">Immersive Mode Statusleiste versteckt</string>
+    <string name="accessibility_quick_settings_immersive_mode_hide_nav_bar">Immersive Mode Navigationsleiste versteckt</string>
+
+    <!-- Announcement made when immersive mode is toggled on/off -->
+    <string name="accessibility_quick_settings_immersive_mode_changed_on">Immersive Mode eingeschaltet</string>
+    <string name="accessibility_quick_settings_immersive_mode_changed_off">Immersive Mode ausgeschaltet</string>
+
+    <!-- QuickSettings: Immersive tile -->
+    <string name="quick_settings_immersive_mode_label">Immersive Mode</string>
+    <string name="quick_settings_immersive_mode_label_hide_all">Vollbild Immersive</string>
+    <string name="quick_settings_immersive_mode_label_hide_all_twoline">Vollbild\nImmersive</string>
+    <string name="quick_settings_immersive_mode_label_hide_status">Nur Navigation</string>
+    <string name="quick_settings_immersive_mode_label_hide_status_twoline">Nur\nNavigation</string>
+    <string name="quick_settings_immersive_mode_label_hide_nav">Nur Statusleiste</string>
+    <string name="quick_settings_immersive_mode_label_hide_nav_twoline">Nur\nStatusleiste</string>
+    <string name="quick_settings_immersive_mode_detail_hide_all">Vollbild Immersive Mode</string>
+    <string name="quick_settings_immersive_mode_detail_hide_status">Nur Navigationsleiste</string>
+    <string name="quick_settings_immersive_mode_detail_hide_nav">Nur Statusleiste</string>
+    <string name="quick_settings_immersive_introduce_hide_all">Navigation- und Statusleiste verstecken, um in den Vollbild Immersive Mode zu wechseln.</string>
+    <string name="quick_settings_immersive_introduce_hide_nav">Nur die Statusleiste verstecken, während die Navigationsleiste an ihrer usprünglichen Position belassen wird.</string>
+    <string name="quick_settings_immersive_introduce_hide_status">Nur die Navigationsleiste verstecken, während die Statusleiste an ihrer usprünglichen Position belassen wird.</string>
+
+    <!-- OnTheSpot: Pie controls feature description message. [CHAR LIMIT=NONE] -->
+    <string name="enable_pie">Möchtest du im Immersive Mode die Pie Controls verwenden?"</string>
+
+    <!-- Pie tile -->
+    <string name="quick_settings_pie_label">Pie</string>
+
+    <!-- PA Pie controls -->
+    <string name="pie_state_name">Pie Controls</string>
+    <string name="pie_state_summary">Pie Controls im Immersive Mode verwenden</string>
+    <string name="pie_battery_level">"AKKUSTANDSANZEIGE "</string>
 </resources>
